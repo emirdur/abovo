@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -std=c++11 -Iinclude
-SRC = src/Matrix.cpp src/DenseLayer.cpp
+SRC = src/Matrix.cpp src/DenseLayer.cpp src/Sequential.cpp
 OBJ = $(SRC:.cpp=.o)
 TARGET = NN-ab-ovo
 

@@ -17,7 +17,7 @@ Matrix DenseLayer::forward(const Matrix& X) const {
 }
 
 // ReLU for now
-Matrix DenseLayer::activation(const Matrix& X) {
+Matrix DenseLayer::activation(const Matrix& X) const {
 	int X_rows = X.getRows();
 	int X_cols = X.getCols();
 

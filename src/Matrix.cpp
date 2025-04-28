@@ -54,16 +54,19 @@ int Matrix::getCols() const {
 
 // pass by reference so no need to copy
 Matrix Matrix::operator+(const Matrix& other) const {
-    if (rows != other.rows || cols != other.cols) {
-        throw std::invalid_argument("Matrix dimensions must match for addition.");
+    if (rows != other.rows && other.rows != 1) {
+        throw std::invalid_argument("Matrix dimensions must match or be broadcasted.");
     }
-
+    if (cols != other.cols) {
+        throw std::invalid_argument("Column dimensions must match.");
+    }
+    
     Matrix res(rows, cols);
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
-            res.data[i][j] = data[i][j] + other.data[i][j]; // this + other
+            res.data[i][j] = data[i][j] + other.data[other.rows == 1 ? 0 : i][j];
         }
-    }
+    }    
 
     return res;
 }

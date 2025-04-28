@@ -13,7 +13,7 @@ public:
     DenseLayer(int in, int out);
 
     Matrix forward(const Matrix& X) const;
-    Matrix activation(const Matrix& X);
+    Matrix activation(const Matrix& X) const;
     void print() const;
 };
 
