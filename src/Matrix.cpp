@@ -35,13 +35,21 @@ void Matrix::randomize() {
     }
 }
 
-void Matrix::print() {
+void Matrix::print() const {
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
             std::cout << data[i][j] << " ";
         }
         std::cout << std::endl;
     }
+}
+
+int Matrix::getRows() const {
+    return rows;
+}
+
+int Matrix::getCols() const {
+    return cols;
 }
 
 // pass by reference so no need to copy
@@ -107,6 +115,10 @@ Matrix& Matrix::operator=(const Matrix& other) {
     }
 
     return *this;
+}
+
+double& Matrix::operator()(int row, int col) const {
+    return data[row][col];
 }
 
 Matrix Matrix::transpose() const {

@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -std=c++11 -Iinclude
-SRC = src/Matrix.cpp
+SRC = src/Matrix.cpp src/DenseLayer.cpp
 OBJ = $(SRC:.cpp=.o)
 TARGET = NN-ab-ovo
 
@@ -12,8 +12,8 @@ $(TARGET): $(OBJ) tests/main.o
 tests/main.o: tests/main.cpp
 	$(CXX) $(CXXFLAGS) -c tests/main.cpp -o tests/main.o
 
-src/Matrix.o: src/Matrix.cpp
-	$(CXX) $(CXXFLAGS) -c src/Matrix.cpp -o src/Matrix.o
+src/%.o: src/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	rm -f $(OBJ) tests/*.o $(TARGET)

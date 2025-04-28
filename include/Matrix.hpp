@@ -13,10 +13,14 @@ public:
     Matrix(const Matrix& other);
 
     void randomize();
-    void print();
+    void print() const;
+    int getRows() const;
+    int getCols() const;
+    // won't change any member data within the function
     Matrix operator+(const Matrix& other) const;
     Matrix operator*(const Matrix& other) const;
     Matrix& operator=(const Matrix& other);
+    double& operator()(int row, int col) const;
     Matrix transpose() const;
 };
 
