@@ -1,0 +1,48 @@
+# Build outputs
+*.o
+*.obj
+*.exe
+*.out
+*.app
+*.dll
+*.so
+*.dylib
+NN-ab-ovo
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Dependency directories
+vendor/
+lib/
+deps/
+
+# CMake build directories
+build/
+cmake-build-*/
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Other common ignores
+compile_commands.json
+.cache/
