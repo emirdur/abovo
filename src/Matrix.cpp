@@ -30,10 +30,10 @@ Matrix::Matrix(const Matrix& other) : rows(other.rows), cols(other.cols) {
     }
 }
 
-void Matrix::randomize() {
+void Matrix::randomize(double fan_in) {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution<> dist(0.0, 1.0);
+    std::normal_distribution<> dist(0.0, std::sqrt(2.0 / fan_in)); // He weight initialization
 
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
@@ -153,18 +153,6 @@ Matrix Matrix::transpose() const {
     }
     
     return result;
-}
-
-Matrix Matrix::relu_derivative() {
-	Matrix prime(rows, cols);
-
-	for (int i = 0; i < rows; ++i) {
-		for (int j = 0; j < cols; ++j) {
-			prime.data[i][j] = (this->data[i][j] > 0) ? 1.0 : 0.0;
-		}
-	}
-
-	return prime;
 }
 
 Matrix Matrix::hadamard_product(const Matrix& other) const {

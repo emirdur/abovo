@@ -13,7 +13,7 @@ public:
 
     Matrix(const Matrix& other);
 
-    void randomize();
+    void randomize(double fan_in);
     void print() const;
     int getRows() const;
     int getCols() const;
@@ -24,7 +24,6 @@ public:
     Matrix& operator=(const Matrix& other);
     double& operator()(int row, int col) const;
     Matrix transpose() const;
-    Matrix relu_derivative();
     Matrix hadamard_product(const Matrix& other) const;
 };
 

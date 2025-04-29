@@ -21,7 +21,7 @@ int main() {
     model.add(DenseLayer(4, 1));
 
     // epochs, batch_size, learning_rate
-    model.train(X, y, 500, 2, 0.01);
+    model.train(X, y, 500, 2, 0.001);
 
     std::cout << std::endl << "Predictions after training:" << std::endl;
     Matrix predictions = model.forward(X);
