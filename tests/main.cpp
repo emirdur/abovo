@@ -4,16 +4,28 @@
 #include "Sequential.hpp"
 
 int main() {
+    Matrix X(4, 2);
+    X(0, 0) = 0; X(0, 1) = 0;
+    X(1, 0) = 0; X(1, 1) = 1;
+    X(2, 0) = 1; X(2, 1) = 0;
+    X(3, 0) = 1; X(3, 1) = 1;
+
+    Matrix y(4, 1);
+    y(0, 0) = 0;
+    y(1, 0) = 1;
+    y(2, 0) = 1;
+    y(3, 0) = 0;
+
     Sequential model;
-    model.add(DenseLayer(2, 3));
-    model.add(DenseLayer(3, 1));
+    model.add(DenseLayer(2, 4));
+    model.add(DenseLayer(4, 1));
 
-    Matrix input(1, 2);
-    input(0, 0) = 0.5;
-    input(0, 1) = -1.5;
+    // epochs, batch_size, learning_rate
+    model.train(X, y, 500, 2, 0.01);
 
-    Matrix output = model.forward(input);
+    std::cout << std::endl << "Predictions after training:" << std::endl;
+    Matrix predictions = model.forward(X);
+    predictions.print();
 
-    output.print();
+    return 0;
 }
-

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <stdexcept>
+#include <random>
 #include "Matrix.hpp"
 
 Matrix::Matrix(int r, int c): rows(r), cols(c) {
@@ -9,6 +10,8 @@ Matrix::Matrix(int r, int c): rows(r), cols(c) {
         data[i] = new double[cols];
     }
 }
+
+Matrix::Matrix() : rows(0), cols(0), data(nullptr) {}
 
 Matrix::~Matrix() {
     for (int i = 0; i < rows; ++i) {
@@ -28,9 +31,13 @@ Matrix::Matrix(const Matrix& other) : rows(other.rows), cols(other.cols) {
 }
 
 void Matrix::randomize() {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dist(0.0, 1.0);
+
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
-            data[i][j] = (double) (rand() % 100) / 100.0;
+            data[i][j] = dist(gen);
         }
     }
 }
@@ -90,6 +97,18 @@ Matrix Matrix::operator*(const Matrix& other) const {
     return res;
 }
 
+Matrix Matrix::operator*(double scalar) const {
+    Matrix res(rows, cols);
+
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            res.data[i][j] = data[i][j] * scalar;
+        }
+    }
+
+    return res;
+}
+
 Matrix& Matrix::operator=(const Matrix& other) {
     if (this == &other) {
         return *this;
@@ -134,4 +153,32 @@ Matrix Matrix::transpose() const {
     }
     
     return result;
+}
+
+Matrix Matrix::relu_derivative() {
+	Matrix prime(rows, cols);
+
+	for (int i = 0; i < rows; ++i) {
+		for (int j = 0; j < cols; ++j) {
+			prime.data[i][j] = (this->data[i][j] > 0) ? 1.0 : 0.0;
+		}
+	}
+
+	return prime;
+}
+
+Matrix Matrix::hadamard_product(const Matrix& other) const {
+	if (rows != other.rows || cols != other.cols) {
+		throw std::invalid_argument("Matrix dimensions must match for hadamard multiplication.");
+	}
+
+    Matrix res(rows, cols);
+
+	for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            res.data[i][j] = this->data[i][j] * other.data[i][j];
+        }
+    }
+
+    return res;
 }
