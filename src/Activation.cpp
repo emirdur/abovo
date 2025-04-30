@@ -1,4 +1,5 @@
 #include "Activation.hpp"
+#include <cmath>
 #include <algorithm>
 
 Matrix Activation::relu(const Matrix& X) {
@@ -38,5 +39,32 @@ Matrix Activation::leaky_relu_derivative(const Matrix& X, double alpha) {
             res(i, j) = X(i, j) > 0 ? 1.0 : alpha;
         }
     }
+    return res;
+}
+
+Matrix Activation::sigmoid(const Matrix& X) {
+    Matrix res(X.getRows(), X.getCols());
+    
+    for (int i = 0; i < X.getRows(); ++i) {
+        for (int j = 0; j < X.getCols(); ++j) {
+            double x = X(i, j);
+            res(i, j) = 1.0 / (1.0 + std::exp(-x));
+        }
+    }
+    
+    return res;
+}
+
+Matrix Activation::sigmoid_derivative(const Matrix& X) {
+    Matrix res(X.getRows(), X.getCols());
+    
+    for (int i = 0; i < X.getRows(); ++i) {
+        for (int j = 0; j < X.getCols(); ++j) {
+            double sigmoid_x = 1.0 / (1.0 + std::exp(-X(i, j)));
+            
+            res(i, j) = sigmoid_x * (1.0 - sigmoid_x);
+        }
+    }
+    
     return res;
 }

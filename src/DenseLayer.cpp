@@ -2,10 +2,8 @@
 #include <cstdlib>
 #include <algorithm>
 #include "DenseLayer.hpp"
-#include "Activation.hpp"
 
-
-DenseLayer::DenseLayer(int in, int out): input_size(in), output_size(out), weights(input_size, output_size), biases(1, output_size) {	
+DenseLayer::DenseLayer(int in, int out, ActivationType activation): input_size(in), output_size(out), weights(input_size, output_size), biases(1, output_size), activation_type(activation) {	
 	weights.randomize(input_size);
 	
 	for (int j = 0; j < output_size; ++j) {
@@ -22,7 +20,14 @@ Matrix DenseLayer::forward(const Matrix& X) {
 
 // ReLU for now
 Matrix DenseLayer::activation(const Matrix& X) const {
-	return Activation::leaky_relu(X);
+	switch (activation_type) {
+		case ActivationType::LEAKY_RELU:
+			return Activation::leaky_relu(X);
+		case ActivationType::SIGMOID:
+			return Activation::sigmoid(X);
+		default:
+			return Activation::relu(X);
+	}
 }
 
 void DenseLayer::print() const {
@@ -48,7 +53,20 @@ Matrix DenseLayer::backward(const Matrix& incoming_gradient, double learning_rat
 	// last_linear_output.relu_derivative() = da^(L) / dz^(L)
 	// we hadamard product it because each gradient requires an activation derivative
 	// adjusted_gradient = dC_0 / da^(L) * da^(L) / dz^(L) = dC_0 / dz^(L)
-	Matrix adjusted_gradient = incoming_gradient.hadamard_product(Activation::leaky_relu_derivative(last_linear_output));
+	Matrix activation_derivative;
+	switch (activation_type) {
+		case ActivationType::LEAKY_RELU:
+			activation_derivative = Activation::leaky_relu_derivative(last_linear_output);
+			break;
+		case ActivationType::SIGMOID:
+			activation_derivative = Activation::sigmoid_derivative(last_linear_output);
+			break;
+		default:
+			activation_derivative = Activation::relu_derivative(last_linear_output);
+			break;
+	}
+
+	Matrix adjusted_gradient = incoming_gradient.hadamard_product(activation_derivative);
 
 	// check for explosions
 	double max_val = -1e9;

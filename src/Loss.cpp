@@ -15,7 +15,7 @@ double Loss::mse(const Matrix& y_pred, const Matrix& y_true) const {
 
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
-            double diff = y_true(i, j) - y_pred(i, j);
+            double diff = y_pred(i, j) - y_true(i, j);
             sum += diff * diff;
         }
     }
@@ -36,7 +36,7 @@ Matrix Loss::d_mse(const Matrix& y_pred, const Matrix& y_true) const {
 
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
-            grad(i, j) = 2.00 * (y_true(i, j) - y_pred(i, j)) / n;
+            grad(i, j) = 2.00 * (y_pred(i, j) - y_true(i, j)) / n;
         }
     }
 

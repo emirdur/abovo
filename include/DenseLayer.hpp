@@ -1,6 +1,7 @@
 #ifndef DENSELAYER_HPP
 #define DENSELAYER_HPP
 #include "Matrix.hpp"
+#include "Activation.hpp"
 
 class DenseLayer {
 private:
@@ -13,8 +14,10 @@ private:
     // where z = w * x + b
     Matrix last_linear_output;
 
+    ActivationType activation_type;
+
 public:
-    DenseLayer(int in, int out);
+    DenseLayer(int in, int out, ActivationType activation_type);
 
     Matrix forward(const Matrix& X);
     Matrix activation(const Matrix& X) const;

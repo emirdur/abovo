@@ -2,6 +2,7 @@
 #include "Matrix.hpp"
 #include "DenseLayer.hpp"
 #include "Sequential.hpp"
+#include "Activation.hpp"
 
 int main() {
     Matrix X(4, 2);
@@ -17,11 +18,12 @@ int main() {
     y(3, 0) = 0;
 
     Sequential model;
-    model.add(DenseLayer(2, 4));
-    model.add(DenseLayer(4, 1));
+    model.add(DenseLayer(2, 16, ActivationType::LEAKY_RELU));
+    model.add(DenseLayer(16, 4, ActivationType::LEAKY_RELU));
+    model.add(DenseLayer(4, 1, ActivationType::SIGMOID));
 
     // epochs, batch_size, learning_rate
-    model.train(X, y, 500, 2, 0.001);
+    model.train(X, y, 2500, 2, 0.1);
 
     std::cout << std::endl << "Predictions after training:" << std::endl;
     Matrix predictions = model.forward(X);
