@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++11 -Iinclude
+CXXFLAGS = -std=c++20 -Iinclude -O2 -Wall -Wextra -pedantic -flto -g -march=native
 SRC = src/Matrix.cpp src/DenseLayer.cpp src/Sequential.cpp src/Loss.cpp src/Activation.cpp
 OBJ = $(SRC:.cpp=.o)
 TARGET = NN-ab-ovo

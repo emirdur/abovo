@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <algorithm>
+#include <cmath>
 #include "DenseLayer.hpp"
 
 DenseLayer::DenseLayer(int in, int out, ActivationType activation): input_size(in), output_size(out), weights(input_size, output_size), biases(1, output_size), activation_type(activation) {	
@@ -80,10 +81,10 @@ Matrix DenseLayer::backward(const Matrix& incoming_gradient, double learning_rat
 	}
 
 	if (std::isnan(max_val) || std::isnan(min_val)) {
-		std::cerr << "Explosion detected in adjusted gradient" << std::endl;
+		std::cerr << "Explosion detected in adjusted gradient." << std::endl;
 	}
 	else if (std::abs(max_val) > 1e3 || std::abs(min_val) > 1e3) {
-		std::cerr << "Warning: Large gradient values detected. Max: " << max_val << " Min: " << min_val << std::endl;
+		std::cerr << "Warning: Large gradient values detected. Max: " << max_val << " Min: " << min_val << "." << std::endl;
 	}
 
 	// last_input.tranpose() = dz^(L) / dw^(L)
