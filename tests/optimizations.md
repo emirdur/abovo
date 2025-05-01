@@ -8,9 +8,9 @@ This document tracks optimization experiments performed on a C++ neural network 
 
 ### Setup
 
-**Hardware**: Apple M2 Pro (Docker running x86_64 emulated via Debian)
-**Compiler**: `g++`
-**Dataset**: XOR binary classification
+**Hardware**: Apple M2 Pro (Docker running x86_64 emulated via Debian)  
+**Compiler**: `g++`  
+**Dataset**: XOR binary classification  
 **Model**:
 
 ```cpp
@@ -19,10 +19,10 @@ model.add(DenseLayer(8, 1, ActivationType::SIGMOID));
 model.train(X, y, 1000, 2, 0.1);
 ```
 
-**Matrix Multiplication**: Naive triple-loop
-**Compiler Flags**: -O2
-**Timing**: std::chrono
-**Profiling Tool**: valgrind --tool=cachegrind
+**Matrix Multiplication**: Naive triple-loop  
+**Compiler Flags**: -O2  
+**Timing**: std::chrono  
+**Profiling Tool**: valgrind --tool=cachegrind  
 **Goal**: Establish base cache behavior and instruction count
 
 ### Results
