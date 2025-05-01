@@ -1,33 +1,33 @@
 #include <iostream>
-#include "Matrix.hpp"
-#include "DenseLayer.hpp"
-#include "Sequential.hpp"
-#include "Activation.hpp"
+#include <vector>
+#include <numeric>
+#include <cmath>
+
+#include "nn/Matrix.hpp"
+#include "nn/DenseLayer.hpp"
+#include "nn/Sequential.hpp"
+#include "nn/Activation.hpp"
+#include "nn/matmul/Naive.hpp"
+#include "nn/matmul/Blocked.hpp"
+
+using namespace nn;
 
 int main() {
-    Matrix X(4, 2);
-    X(0, 0) = 0; X(0, 1) = 0;
-    X(1, 0) = 0; X(1, 1) = 1;
-    X(2, 0) = 1; X(2, 1) = 0;
-    X(3, 0) = 1; X(3, 1) = 1;
+    // Playground
 
-    Matrix y(4, 1);
-    y(0, 0) = 0;
-    y(1, 0) = 1;
-    y(2, 0) = 1;
-    y(3, 0) = 0;
+    // You can test whatever you'd like in here. The Dockerfile is pre-written to run valgrind to check for cache
+    // misses. For example, you can test out how many cache misses the naive matrix multiplication has:
 
-    Sequential model;
-    model.add(DenseLayer(2, 16, ActivationType::LEAKY_RELU));
-    model.add(DenseLayer(16, 4, ActivationType::LEAKY_RELU));
-    model.add(DenseLayer(4, 1, ActivationType::SIGMOID));
+    int MATRIX_SIZE = 256;
 
-    // epochs, batch_size, learning_rate
-    model.train(X, y, 2500, 2, 0.1);
+    Matrix A(MATRIX_SIZE, MATRIX_SIZE);
+    Matrix B(MATRIX_SIZE, MATRIX_SIZE);
+    A.randomize(MATRIX_SIZE);
+    B.randomize(MATRIX_SIZE);
+    
+    Matrix C = matmul::multiply_naive(A, B);
 
-    std::cout << std::endl << "Predictions after training:" << std::endl;
-    Matrix predictions = model.forward(X);
-    predictions.print();
-
+    // Once you run your Dockerfile (docker build -t nn-ab-ovo .; docker run --rm nn-ab-ovo) you'll be able to profile
+    // cache misses and compare it with the blocked multiplication version.
     return 0;
 }

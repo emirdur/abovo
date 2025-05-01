@@ -1,0 +1,30 @@
+#include "nn/Activation.hpp"
+#include "nn/activation/ReLU.hpp"
+#include "nn/activation/LeakyReLU.hpp"
+#include "nn/activation/Sigmoid.hpp"
+
+namespace nn {
+
+Matrix Activation::activation(const Matrix& X, ActivationType type) {
+    switch (type) {
+        case ActivationType::LEAKY_RELU:
+            return activation::leaky_relu(X);
+        case ActivationType::SIGMOID:
+            return activation::sigmoid(X);
+        default:
+            return activation::relu(X);
+    }
+}
+
+Matrix Activation::activation_derivative(const Matrix& X, ActivationType type) {
+    switch (type) {
+        case ActivationType::LEAKY_RELU:
+            return activation::leaky_relu_derivative(X);
+        case ActivationType::SIGMOID:
+            return activation::sigmoid_derivative(X);
+        default:
+            return activation::relu_derivative(X);
+    }
+}
+
+}

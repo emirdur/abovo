@@ -1,9 +1,10 @@
-#include <iostream>
-#include <cstdlib>
 #include <stdexcept>
-#include "Loss.hpp"
 
-double Loss::mse(const Matrix& y_pred, const Matrix& y_true) const {
+#include "nn/loss/MSE.hpp"
+
+namespace nn::loss {
+
+double mse(const Matrix& y_pred, const Matrix& y_true) {
     if (y_pred.getRows() != y_true.getRows() || y_pred.getCols() != y_true.getCols()) {
         throw std::invalid_argument("Matrix dimensions must match.");
     }
@@ -23,7 +24,7 @@ double Loss::mse(const Matrix& y_pred, const Matrix& y_true) const {
     return sum / n;
 }
 
-Matrix Loss::d_mse(const Matrix& y_pred, const Matrix& y_true) const {
+Matrix mse_derivative(const Matrix& y_pred, const Matrix& y_true) {
     if (y_pred.getRows() != y_true.getRows() || y_pred.getCols() != y_true.getCols()) {
         throw std::invalid_argument("Matrix dimensions must match.");
     }
@@ -41,4 +42,6 @@ Matrix Loss::d_mse(const Matrix& y_pred, const Matrix& y_true) const {
     }
 
     return grad;
+}
+
 }

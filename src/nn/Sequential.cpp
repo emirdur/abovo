@@ -1,8 +1,11 @@
-#include "Sequential.hpp"
 #include <iostream>
 #include <algorithm>
 #include <random>
 #include <cmath>
+
+#include "nn/Sequential.hpp"
+
+namespace nn {
 
 Sequential::Sequential() {}
 
@@ -18,7 +21,7 @@ Matrix Sequential::forward(const Matrix& X) {
 } 
 
 void Sequential::backward(const Matrix& y_pred, const Matrix& y_true, double learning_rate) {
-    Matrix gradient = loss.d_mse(y_pred, y_true);
+    Matrix gradient = loss.loss_derivative(y_pred, y_true);
     
     for (int i = layers.size() - 1; i >= 0; --i) {
         gradient = layers[i].backward(gradient, learning_rate);
@@ -76,7 +79,7 @@ void Sequential::train(const Matrix& X, const Matrix& y, int epochs, int batch_s
             
             Matrix preds = forward(batch_X);
             
-            double batch_loss = loss.mse(preds, batch_y);
+            double batch_loss = loss.loss(preds, batch_y);
             epoch_loss += batch_loss;
             
             backward(preds, batch_y, learning_rate);
@@ -88,4 +91,36 @@ void Sequential::train(const Matrix& X, const Matrix& y, int epochs, int batch_s
             std::cout << "Epoch " << epoch + 1 << "/" << epochs << " - Loss: " << epoch_loss << std::endl;
         }
     }
+}
+
+// finds max value = prediction and label
+double Sequential::evaluate(const Matrix& X_test, const Matrix& y_test) {
+    Matrix y_pred = forward(X_test);
+    int correct = 0;
+
+    for (int i = 0; i < y_pred.getRows(); ++i) {
+        int pred_label = 0;
+        double max_pred = y_pred(i, 0);
+        for (int j = 1; j < y_pred.getCols(); ++j) {
+            if (y_pred(i, j) > max_pred) {
+                max_pred = y_pred(i, j);
+                pred_label = j;
+            }
+        }
+        
+        int true_label = 0;
+        double max_true = y_test(i, 0);
+        for (int j = 1; j < y_test.getCols(); ++j) {
+            if (y_test(i, j) > max_true) {
+                max_true = y_test(i, j);
+                true_label = j;
+            }
+        }
+        
+        if (pred_label == true_label) ++correct;
+    }
+
+    return static_cast<double>(correct) / X_test.getRows();
+}
+
 }

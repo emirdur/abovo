@@ -2,7 +2,10 @@
 #include <cstdlib>
 #include <algorithm>
 #include <cmath>
-#include "DenseLayer.hpp"
+
+#include "nn/DenseLayer.hpp"
+
+namespace nn {
 
 DenseLayer::DenseLayer(int in, int out, ActivationType activation): input_size(in), output_size(out), weights(input_size, output_size), biases(1, output_size), activation_type(activation) {	
 	weights.randomize(input_size);
@@ -19,16 +22,8 @@ Matrix DenseLayer::forward(const Matrix& X) {
 	return z;
 }
 
-// ReLU for now
 Matrix DenseLayer::activation(const Matrix& X) const {
-	switch (activation_type) {
-		case ActivationType::LEAKY_RELU:
-			return Activation::leaky_relu(X);
-		case ActivationType::SIGMOID:
-			return Activation::sigmoid(X);
-		default:
-			return Activation::relu(X);
-	}
+    return Activation::activation(X, activation_type);
 }
 
 void DenseLayer::print() const {
@@ -40,7 +35,7 @@ void DenseLayer::print() const {
 		std::cout << std::endl;
 	}
 
-	std::cout << std::endl << "Biases" << std::endl;
+	std::cout << std::endl << "Biases:" << std::endl;
 	for (int i = 0; i < output_size; ++i) {
 		std::cout << biases(0, i) << " ";
 	}
@@ -54,20 +49,9 @@ Matrix DenseLayer::backward(const Matrix& incoming_gradient, double learning_rat
 	// last_linear_output.relu_derivative() = da^(L) / dz^(L)
 	// we hadamard product it because each gradient requires an activation derivative
 	// adjusted_gradient = dC_0 / da^(L) * da^(L) / dz^(L) = dC_0 / dz^(L)
-	Matrix activation_derivative;
-	switch (activation_type) {
-		case ActivationType::LEAKY_RELU:
-			activation_derivative = Activation::leaky_relu_derivative(last_linear_output);
-			break;
-		case ActivationType::SIGMOID:
-			activation_derivative = Activation::sigmoid_derivative(last_linear_output);
-			break;
-		default:
-			activation_derivative = Activation::relu_derivative(last_linear_output);
-			break;
-	}
-
-	Matrix adjusted_gradient = incoming_gradient.hadamard_product(activation_derivative);
+	Matrix activation_derivative = Activation::activation_derivative(last_linear_output, activation_type);
+    
+    Matrix adjusted_gradient = incoming_gradient.hadamard_product(activation_derivative);
 
 	// check for explosions
 	double max_val = -1e9;
@@ -81,10 +65,10 @@ Matrix DenseLayer::backward(const Matrix& incoming_gradient, double learning_rat
 	}
 
 	if (std::isnan(max_val) || std::isnan(min_val)) {
-		std::cerr << "Explosion detected in adjusted gradient." << std::endl;
+		std::clog << "[DEBUG]: Explosion detected in adjusted gradient." << std::endl;
 	}
 	else if (std::abs(max_val) > 1e3 || std::abs(min_val) > 1e3) {
-		std::cerr << "Warning: Large gradient values detected. Max: " << max_val << " Min: " << min_val << "." << std::endl;
+		std::clog << "[DEBUG]: Large gradient values detected. Max: " << max_val << " Min: " << min_val << "." << std::endl;
 	}
 
 	// last_input.tranpose() = dz^(L) / dw^(L)
@@ -111,3 +95,4 @@ Matrix DenseLayer::backward(const Matrix& incoming_gradient, double learning_rat
     return adjusted_gradient * weights.transpose();
 }
 
+}

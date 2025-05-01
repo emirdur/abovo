@@ -1,7 +1,10 @@
 #ifndef DENSELAYER_HPP
 #define DENSELAYER_HPP
+
 #include "Matrix.hpp"
 #include "Activation.hpp"
+
+namespace nn {
 
 class DenseLayer {
 private:
@@ -25,5 +28,7 @@ public:
 
     Matrix backward(const Matrix& d_out, double eta);
 };
+
+}
 
 #endif

@@ -1,8 +1,11 @@
 #ifndef SEQUENTIAL_HPP
 #define SEQUENTIAL_HPP
 #include <vector>
+
 #include "DenseLayer.hpp"
 #include "Loss.hpp"
+
+namespace nn {
 
 class Sequential {
 private:
@@ -20,6 +23,10 @@ public:
 
     // stochastic-like implementation of gradient descent just with more input points in batches
     void train(const Matrix& X, const Matrix& y, int epochs, int batch_size, double learning_rate);
+
+    double evaluate(const Matrix& X_test, const Matrix& y_test);
 };
+
+}
 
 #endif

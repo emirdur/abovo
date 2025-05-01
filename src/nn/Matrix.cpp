@@ -2,7 +2,11 @@
 #include <cstdlib>
 #include <stdexcept>
 #include <random>
-#include "Matrix.hpp"
+
+#include "nn/Matrix.hpp"
+#include "nn/matmul/Blocked.hpp"
+
+namespace nn {
 
 Matrix::Matrix(int r, int c): rows(r), cols(c) {
     data = new double*[rows];
@@ -12,6 +16,16 @@ Matrix::Matrix(int r, int c): rows(r), cols(c) {
 }
 
 Matrix::Matrix() : rows(0), cols(0), data(nullptr) {}
+
+Matrix::Matrix(const std::vector<std::vector<double>>& vec): rows(vec.size()), cols(vec.size() > 0 ? vec[0].size() : 0) {
+    data = new double*[rows];
+    for (int i = 0; i < rows; ++i) {
+        data[i] = new double[cols];
+        for (int j = 0; j < cols; ++j) {
+            data[i][j] = vec[i][j];
+        }
+    }
+}
 
 Matrix::~Matrix() {
     for (int i = 0; i < rows; ++i) {
@@ -62,10 +76,11 @@ int Matrix::getCols() const {
 // pass by reference so no need to copy
 Matrix Matrix::operator+(const Matrix& other) const {
     if (rows != other.rows && other.rows != 1) {
-        throw std::invalid_argument("Matrix dimensions must match or be broadcasted.");
+        throw std::invalid_argument("Matrix dimensions must match or be broadcasted; got row dimensions: " + std::to_string(rows) + " and " + std::to_string(other.rows) + ".");
     }
+
     if (cols != other.cols) {
-        throw std::invalid_argument("Column dimensions must match.");
+        throw std::invalid_argument("Column dimensions must match; got dimensions: " + std::to_string(cols) + " and " + std::to_string(other.cols) + ".");
     }
     
     Matrix res(rows, cols);
@@ -79,22 +94,7 @@ Matrix Matrix::operator+(const Matrix& other) const {
 }
 
 Matrix Matrix::operator*(const Matrix& other) const {
-    if (cols != other.rows) {
-        throw std::invalid_argument("Matrix dimensions must match for multiplication.");
-    }
-
-    Matrix res(rows, other.cols);
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < other.cols; ++j) {
-            res.data[i][j] = 0;
-
-            for (int k = 0; k < cols; ++k) {
-                res.data[i][j] += data[i][k] * other.data[k][j]; // because inner dimensions must match
-            }
-        }
-    }
-
-    return res;
+    return matmul::multiply_blocked(*this, other);
 }
 
 Matrix Matrix::operator*(double scalar) const {
@@ -169,4 +169,6 @@ Matrix Matrix::hadamard_product(const Matrix& other) const {
     }
 
     return res;
+}
+
 }

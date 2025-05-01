@@ -7,7 +7,9 @@
 *.dll
 *.so
 *.dylib
-NN-ab-ovo
+NN-ab-ovo-opt
+NN-mnist
+NN-xor
 
 # IDE and editor files
 .vscode/
@@ -46,3 +48,7 @@ cmake-build-*/
 # Other common ignores
 compile_commands.json
 .cache/
+
+# MNIST dataset files
+*.idx3-ubyte
+*.idx1-ubyte
