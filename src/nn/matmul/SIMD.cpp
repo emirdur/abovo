@@ -121,3 +121,26 @@ namespace nn::matmul {
         return res;
     }
 }
+
+// Example on 2x2 matrices:
+
+// a b   multiplied with   e f
+// c d                     g h
+
+// In memory we store as:
+// a, c, b, d
+// e, g, f, h
+// Since calling float32x2 on column-major A will resultin a, c being loaded as a vector
+
+// Result with normal dot product:
+// ae + bg     af + bh
+// ce + dg     cf + dh
+
+//                                                               C_0       C_1
+// iteration 1: take [a c] multiply with e, multiply with f => [ae, ce], [af, cf]
+// iteration 2: take [b d] multiply with g, multiply with h => [bg, dg], [bh, dh]
+// add them together                                 [ae + bg, ce + dg], [af + bh, cf + dh]
+
+// C_0 has two 32-bit floating values and C_1 has two 32-bit floating values
+
+// We do it this way since we can reuse A0 much more easily than vector-vector dot product and can reuse registers better.

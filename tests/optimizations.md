@@ -19,11 +19,13 @@ model.add(DenseLayer(8, 1, ActivationType::SIGMOID));
 model.train(X, y, 1000, 2, 0.1);
 ```
 
-**Matrix Multiplication**: Naive triple-loop  
+A \* B, where A and B are 256x256 dimension matrices.
+
+**Matrix Multiplication**: Naive triple-loop and multi-loop
 **Compiler Flags**: -O2  
 **Timing**: std::chrono  
 **Profiling Tool**: valgrind --tool=cachegrind  
-**Goal**: Establish base cache behavior and instruction count
+**Goal**: Establish base cache behavior and instruction count as well as matrix multiplication speed.
 
 ### Results
 
@@ -39,3 +41,28 @@ model.train(X, y, 1000, 2, 0.1);
 | -------------- | ------------- | ------- |
 | Naive          | 17,706.1      | –       |
 | Blocking       | 2,987.1       | ~5.93×  |
+
+## Experiment 2: SIMD Blocked Matrix Multiplication
+
+### Setup
+
+**Hardware**: Apple M2 Pro (Docker running x86_64 emulated via Debian)  
+**Compiler**: `g++`  
+**Dataset**: N/A
+**Model**:
+
+A \* B, where A and B are 256x256 dimension matrices.
+
+**Matrix Multiplication**: Multi-loop
+**Compiler Flags**: -O3 -ffast-math
+**Timing**: std::chrono  
+**Profiling Tool**: valgrind --tool=cachegrind  
+**Goal**: Compare SIMD Blocked Matrix Multiplication with Naive and Basic Blocked Matrix Multiplication.
+
+### Results
+
+| Implementation | Avg Time (µs) | Speedup |
+| -------------- | ------------- | ------- |
+| Naive          | 11,039.1      | –       |
+| Blocking       | 2,697.3       | ~4.09×  |
+| SIMD           | 1,094.1       | ~10.09× |
