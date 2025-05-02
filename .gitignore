@@ -7,6 +7,7 @@
 *.dll
 *.so
 *.dylib
+NN-ab-ovo
 NN-ab-ovo-opt
 NN-mnist
 NN-xor
@@ -52,3 +53,5 @@ compile_commands.json
 # MNIST dataset files
 *.idx3-ubyte
 *.idx1-ubyte
+
+*.png

@@ -6,7 +6,7 @@ namespace nn::matmul {
 
 Matrix multiply_naive(const Matrix& A, const Matrix& B) {
     if (A.getCols() != B.getRows()) {
-        throw std::invalid_argument("Incompatible dimensions for matrix multiplication");
+        throw std::invalid_argument("Incompatible dimensions for matrix multiplication.");
     }
 
     int rows = A.getRows();

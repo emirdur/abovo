@@ -5,6 +5,7 @@
 
 #include "nn/Matrix.hpp"
 #include "nn/matmul/Blocked.hpp"
+#include "nn/matmul/SIMD.hpp"
 
 namespace nn {
 
@@ -94,7 +95,7 @@ Matrix Matrix::operator+(const Matrix& other) const {
 }
 
 Matrix Matrix::operator*(const Matrix& other) const {
-    return matmul::multiply_blocked(*this, other);
+    return matmul::multiply_blocked_simd(*this, other);
 }
 
 Matrix Matrix::operator*(double scalar) const {
