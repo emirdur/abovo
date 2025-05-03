@@ -29,7 +29,7 @@ namespace nn::matmul {
         
         std::vector<float> A_block(BLOCK_SIZE * BLOCK_SIZE); // buffers to convert from doubles to floats
         std::vector<float> B_block(BLOCK_SIZE * BLOCK_SIZE); 
-        std::vector<float> C_block(BLOCK_SIZE * BLOCK_SIZE, 0.0); // results tile
+        std::vector<float> C_block(BLOCK_SIZE * BLOCK_SIZE, 0.0f); // results tile
         
         for (int ii = 0; ii < rows; ii += BLOCK_SIZE) {
             int block_rows = std::min(BLOCK_SIZE, rows - ii);

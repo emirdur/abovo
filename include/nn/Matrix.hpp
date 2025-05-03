@@ -2,6 +2,7 @@
 #define NN_MATRIX_HPP
 
 #include <vector>
+#include <utility>
 
 namespace nn { 
 
@@ -9,6 +10,15 @@ class Matrix {
 private:
     int rows, cols;
     double** data;
+
+    struct MinMaxPair {
+        double min;
+        double max;
+    };
+
+    // helper tournament method
+    MinMaxPair getMinMax(double arr[], int low, int high) const;
+    MinMaxPair minmax() const;
 
 public:
     Matrix(int r, int c);
@@ -27,10 +37,17 @@ public:
     Matrix operator*(const Matrix& other) const;
     Matrix operator*(double scalar) const;
     Matrix& operator=(const Matrix& other);
-    double& operator()(int row, int col) const;
+    // modifiable
+    double& operator()(int row, int col);
+    // getter
+    const double& operator()(int row, int col) const;
 
     Matrix transpose() const;
     Matrix hadamard_product(const Matrix& other) const;
+    
+    double getMin() const;
+    double getMax() const;
+
 };
 
 }

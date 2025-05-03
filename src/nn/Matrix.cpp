@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <stdexcept>
 #include <random>
+#include <limits>
 
 #include "nn/Matrix.hpp"
 #include "nn/matmul/Blocked.hpp"
@@ -140,7 +141,11 @@ Matrix& Matrix::operator=(const Matrix& other) {
     return *this;
 }
 
-double& Matrix::operator()(int row, int col) const {
+double& Matrix::operator()(int row, int col) {
+    return data[row][col];
+}
+
+const double& Matrix::operator()(int row, int col) const {
     return data[row][col];
 }
 
@@ -170,6 +175,59 @@ Matrix Matrix::hadamard_product(const Matrix& other) const {
     }
 
     return res;
+}
+
+Matrix::MinMaxPair Matrix::getMinMax(double arr[], int low, int high) const {
+    MinMaxPair minmax;
+
+    if (low == high) {
+        minmax.min = arr[low];
+        minmax.max = arr[low];
+        return minmax;
+    }
+
+    if (high == low + 1) {
+        if (arr[low] > arr[high]) {
+            minmax.max = arr[low];
+            minmax.min = arr[high];
+        } else {
+            minmax.max = arr[high];
+            minmax.min = arr[low];
+        }
+        return minmax;
+    }
+
+    int mid = (low + high) / 2;
+    MinMaxPair left = getMinMax(arr, low, mid);
+    MinMaxPair right = getMinMax(arr, mid + 1, high);
+
+    minmax.min = std::min(left.min, right.min);
+    minmax.max = std::max(left.max, right.max);
+
+    return minmax;
+}
+
+Matrix::MinMaxPair Matrix::minmax() const {
+    int total = rows * cols;
+    double* flat = new double[total];
+
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            flat[i * cols + j] = data[i][j];
+        }
+    }
+
+    MinMaxPair result = getMinMax(flat, 0, total - 1);
+    delete[] flat;
+    return result;
+}
+
+double Matrix::getMin() const {
+    return minmax().min;
+}
+
+double Matrix::getMax() const {
+    return minmax().max;
 }
 
 }
