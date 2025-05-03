@@ -21,7 +21,7 @@ Matrix Sequential::forward(const Matrix& X) {
 } 
 
 void Sequential::backward(const Matrix& y_pred, const Matrix& y_true, double learning_rate) {
-    Matrix gradient = loss.loss_derivative(y_pred, y_true);
+    Matrix gradient = loss.loss_derivative(y_pred, y_true, LossType::MSE);
     
     for (int i = layers.size() - 1; i >= 0; --i) {
         gradient = layers[i].backward(gradient, learning_rate);
@@ -79,7 +79,7 @@ void Sequential::train(const Matrix& X, const Matrix& y, int epochs, int batch_s
             
             Matrix preds = forward(batch_X);
             
-            double batch_loss = loss.loss(preds, batch_y);
+            double batch_loss = loss.loss(preds, batch_y, LossType::MSE);
             epoch_loss += batch_loss;
             
             backward(preds, batch_y, learning_rate);
