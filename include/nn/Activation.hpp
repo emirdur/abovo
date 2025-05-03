@@ -9,6 +9,7 @@ enum class ActivationType {
     RELU,
     LEAKY_RELU,
     SIGMOID,
+    SOFTMAX
 };
 
 class Activation {

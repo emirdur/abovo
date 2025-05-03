@@ -5,10 +5,15 @@
 
 namespace nn {
 
+enum class LossType {
+    MSE,
+    CROSS_ENTROPY,
+};
+
 class Loss {
 public:
-    double loss(const Matrix& y_pred, const Matrix& y_true) const;
-    Matrix loss_derivative(const Matrix& y_pred, const Matrix& y_true) const;
+    double loss(const Matrix& y_pred, const Matrix& y_true, LossType type) const;
+    Matrix loss_derivative(const Matrix& y_pred, const Matrix& y_true, LossType type) const;
 };
 
 }
