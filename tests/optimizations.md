@@ -16,12 +16,12 @@ This document tracks optimization experiments performed on a C++ neural network 
 ```cpp
 model.add(DenseLayer(2, 8, ActivationType::LEAKY_RELU));
 model.add(DenseLayer(8, 1, ActivationType::SIGMOID));
-model.train(X, y, 1000, 2, 0.1);
+model.train(X, y, 1000, 2, 0.1, LossType::MSE);
 ```
 
 A \* B, where A and B are 256x256 dimension matrices.
 
-**Matrix Multiplication**: Naive triple-loop and multi-loop
+**Matrix Multiplication**: Naive triple-loop and multi-loop  
 **Compiler Flags**: -O2  
 **Timing**: std::chrono  
 **Profiling Tool**: valgrind --tool=cachegrind  
@@ -48,13 +48,13 @@ A \* B, where A and B are 256x256 dimension matrices.
 
 **Hardware**: Apple M2 Pro (Docker running x86_64 emulated via Debian)  
 **Compiler**: `g++`  
-**Dataset**: N/A
+**Dataset**: N/A  
 **Model**:
 
 A \* B, where A and B are 256x256 dimension matrices.
 
-**Matrix Multiplication**: Multi-loop
-**Compiler Flags**: -O3 -ffast-math
+**Matrix Multiplication**: Multi-loop  
+**Compiler Flags**: -O3 -ffast-math  
 **Timing**: std::chrono  
 **Profiling Tool**: valgrind --tool=cachegrind  
 **Goal**: Compare SIMD Blocked Matrix Multiplication with Naive and Basic Blocked Matrix Multiplication.

@@ -64,7 +64,7 @@ The engine is modular: activation functions, loss functions, and layers are easi
 ### Future Work
 
 - [ ] Switch Matrix class to use size_t + Refactor
-- [ ] Softmax Implementation
+- [ ] Better Softmax Implementation
 - [ ] Continue with optimizations
 - [ ] Add support for convolutional layers
 - [ ] Import trained models via ONNX or PyTorch

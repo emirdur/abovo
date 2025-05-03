@@ -17,6 +17,17 @@ Matrix::Matrix(int r, int c): rows(r), cols(c) {
     }
 }
 
+Matrix::Matrix(int r, int c, double num): rows(r), cols(c) {
+    data = new double*[rows];
+    for (int i = 0; i < rows; ++i) {
+        data[i] = new double[cols];
+        for (int j = 0; j < cols; ++j) {
+            data[i][j] = num;
+        }
+    }
+}
+
+
 Matrix::Matrix() : rows(0), cols(0), data(nullptr) {}
 
 Matrix::Matrix(const std::vector<std::vector<double>>& vec): rows(vec.size()), cols(vec.size() > 0 ? vec[0].size() : 0) {
@@ -96,7 +107,7 @@ Matrix Matrix::operator+(const Matrix& other) const {
 }
 
 Matrix Matrix::operator*(const Matrix& other) const {
-    return matmul::multiply_blocked_simd(*this, other);
+    return matmul::multiply_blocked(*this, other);
 }
 
 Matrix Matrix::operator*(double scalar) const {

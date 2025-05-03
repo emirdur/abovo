@@ -39,7 +39,7 @@ void Sequential::print() const {
 }
 
 // mini-batch implementation
-void Sequential::train(const Matrix& X, const Matrix& y, int epochs, int batch_size, double learning_rate) {
+void Sequential::train(const Matrix& X, const Matrix& y, int epochs, int batch_size, double learning_rate, LossType loss_type) {
     int num_samples = X.getRows();
     int X_cols = X.getCols();
     int y_cols = y.getCols();
@@ -79,7 +79,7 @@ void Sequential::train(const Matrix& X, const Matrix& y, int epochs, int batch_s
             
             Matrix preds = forward(batch_X);
             
-            double batch_loss = loss.loss(preds, batch_y, LossType::MSE);
+            double batch_loss = loss.loss(preds, batch_y, loss_type);
             epoch_loss += batch_loss;
             
             backward(preds, batch_y, learning_rate);

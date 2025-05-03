@@ -22,7 +22,7 @@ public:
     void backward(const Matrix& y_pred, const Matrix& y_true, double eta); 
 
     // stochastic-like implementation of gradient descent just with more input points in batches
-    void train(const Matrix& X, const Matrix& y, int epochs, int batch_size, double learning_rate);
+    void train(const Matrix& X, const Matrix& y, int epochs, int batch_size, double learning_rate, LossType loss_type);
 
     double evaluate(const Matrix& X_test, const Matrix& y_test);
 

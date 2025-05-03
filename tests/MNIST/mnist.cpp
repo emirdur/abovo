@@ -26,18 +26,18 @@ int main() {
         }
         
         Sequential model;
-        model.add(DenseLayer(784, 512, ActivationType::LEAKY_RELU));
-        model.add(DenseLayer(512, 256, ActivationType::LEAKY_RELU));
-        model.add(DenseLayer(256, 128, ActivationType::LEAKY_RELU));
-        model.add(DenseLayer(128, 10, ActivationType::SIGMOID));
-        
+        model.add(DenseLayer(784, 512, ActivationType::RELU));
+        model.add(DenseLayer(512, 256, ActivationType::RELU));
+        model.add(DenseLayer(256, 128, ActivationType::RELU));
+        model.add(DenseLayer(128, 10, ActivationType::SOFTMAX));
+
         Matrix X_train(images);
         Matrix y_train(labels);
         Matrix X_test(test_images);
         Matrix y_test(test_labels);
         
         std::clog << "[DEBUG]: Starting training..." << std::endl;
-        model.train(X_train, y_train, 15, 64, 0.01);
+        model.train(X_train, y_train, 25, 64, 0.01, LossType::CROSS_ENTROPY);
         
         std::clog << "[DEBUG]: Training complete!" << std::endl;
         

@@ -25,7 +25,7 @@ int main() {
     model.add(DenseLayer(8, 1, ActivationType::SIGMOID));
 
     // epochs, batch_size, learning_rate
-    model.train(X, y, 1000, 2, 0.1);
+    model.train(X, y, 1000, 2, 0.1, LossType::MSE);
 
     std::cout << std::endl << "Predictions after training:" << std::endl;
     Matrix predictions = model.forward(X);

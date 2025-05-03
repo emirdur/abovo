@@ -22,6 +22,7 @@ private:
 
 public:
     Matrix(int r, int c);
+    Matrix(int r, int c, double val);
     Matrix();
     ~Matrix();
     Matrix(const std::vector<std::vector<double>>& vec);
