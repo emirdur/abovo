@@ -43,4 +43,12 @@ nn::Matrix Int8Matrix::dequantize() const {
     return res;
 }
 
+float Int8Matrix::getScale() const { 
+    return scale; 
+}
+
+float Int8Matrix::getMin() const { 
+    return min; 
+}
+
 }

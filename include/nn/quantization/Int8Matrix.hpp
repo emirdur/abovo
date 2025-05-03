@@ -21,6 +21,9 @@ public:
 
     static Int8Matrix quantize(const nn::Matrix& X);
     nn::Matrix dequantize() const;
+
+    float getScale() const;
+    float getMin() const;
 };
 
 } 

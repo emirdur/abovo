@@ -43,6 +43,8 @@ int main() {
         
         double test_accuracy = model.evaluate(X_test, y_test);
         std::cout << "Final test accuracy: " << test_accuracy * 100 << "%" << std::endl;
+
+        model.dequantizeAll();
     } catch (const std::exception& e) {
         std::cerr << "[ERROR]: " << e.what() << std::endl;
         return 1;

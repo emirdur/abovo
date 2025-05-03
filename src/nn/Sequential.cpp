@@ -123,4 +123,25 @@ double Sequential::evaluate(const Matrix& X_test, const Matrix& y_test) {
     return static_cast<double>(correct) / X_test.getRows();
 }
 
+void Sequential::quantizeAll() {
+    for (auto& layer : layers) {
+        layer.quantize();
+    }
+}
+
+void Sequential::dequantizeAll() {
+    for (auto& layer : layers) {
+        layer.dequantize();
+    }
+}
+
+bool Sequential::isQuantized() const {
+    for (const auto& layer : layers) {
+        if (!layer.isQuantized()) {
+            return false;
+        }
+    }
+    return true;
+}
+
 }

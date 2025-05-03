@@ -7,7 +7,8 @@
 
 namespace nn {
 
-DenseLayer::DenseLayer(int in, int out, ActivationType activation): input_size(in), output_size(out), weights(input_size, output_size), biases(1, output_size), activation_type(activation) {	
+DenseLayer::DenseLayer(int in, int out, ActivationType activation): input_size(in), output_size(out), weights(input_size, output_size), 
+  biases(1, output_size), activation_type(activation), is_quantized(false), quantized_weights(0, 0, 1.0, 0.0) {	
 	weights.randomize(input_size);
 	
 	for (int j = 0; j < output_size; ++j) {
@@ -15,9 +16,37 @@ DenseLayer::DenseLayer(int in, int out, ActivationType activation): input_size(i
 	}
 }
 
+void DenseLayer::quantize() {
+    if (!is_quantized) {
+        quantized_weights = quantization::Int8Matrix::quantize(weights);
+        is_quantized = true;
+    }
+}
+
+void DenseLayer::dequantize() {
+    if (is_quantized) {
+        weights = quantized_weights.dequantize();
+        is_quantized = false;
+    }
+}
+
+bool DenseLayer::isQuantized() const {
+	return is_quantized;
+}
+
+
+
 Matrix DenseLayer::forward(const Matrix& X) {
 	last_input = X;
-	Matrix z = X * weights + biases;
+	Matrix z;
+
+	if (is_quantized) {
+		Matrix deq_weights = quantized_weights.dequantize();
+        z = X * deq_weights + biases;
+	} else {
+		z = X * weights + biases;
+	}
+
 	last_linear_output = z;
 	return z;
 }
@@ -27,12 +56,28 @@ Matrix DenseLayer::activation(const Matrix& X) const {
 }
 
 void DenseLayer::print() const {
+	std::cout << "Quantized: " << (is_quantized ? "Yes" : "No") << std::endl;
+
 	std::cout << "Weights:" << std::endl;
-	for (int i = 0; i < input_size; ++i) {
-		for (int j = 0; j < output_size; ++j) {
-			std::cout << weights(i, j) << " ";
+	if (is_quantized) {
+        std::cout << "Quantized weights (showing dequantized values):" << std::endl;
+        Matrix deq = quantized_weights.dequantize();
+        for (int i = 0; i < input_size; ++i) {
+            for (int j = 0; j < output_size; ++j) {
+                std::cout << deq(i, j) << " ";
+            }
+            std::cout << std::endl;
+        }
+        
+        std::cout << "Quantization scale: " << quantized_weights.getScale() << std::endl;
+        std::cout << "Quantization min: " << quantized_weights.getMin() << std::endl;
+    } else {
+		for (int i = 0; i < input_size; ++i) {
+			for (int j = 0; j < output_size; ++j) {
+				std::cout << weights(i, j) << " ";
+			}
+			std::cout << std::endl;
 		}
-		std::cout << std::endl;
 	}
 
 	std::cout << std::endl << "Biases:" << std::endl;
@@ -44,6 +89,22 @@ void DenseLayer::print() const {
 }
 
 Matrix DenseLayer::backward(const Matrix& incoming_gradient, double learning_rate) {
+	if (is_quantized) {
+        Matrix deq_weights = quantized_weights.dequantize();
+        
+        auto saved_quantized = quantized_weights;
+        
+        weights = deq_weights;
+        is_quantized = false;
+
+        Matrix result = backward(incoming_gradient, learning_rate);
+        
+        quantized_weights = quantization::Int8Matrix::quantize(weights);
+        is_quantized = true;
+        
+        return result;
+    }
+
 	// z = a * W + b
 	// incoming_gradient = dC_0 / da^(L)
 	// last_linear_output.relu_derivative() = da^(L) / dz^(L)

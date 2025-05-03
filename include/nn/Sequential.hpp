@@ -25,6 +25,10 @@ public:
     void train(const Matrix& X, const Matrix& y, int epochs, int batch_size, double learning_rate);
 
     double evaluate(const Matrix& X_test, const Matrix& y_test);
+
+    void quantizeAll();
+    void dequantizeAll();
+    bool isQuantized() const;
 };
 
 }
