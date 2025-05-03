@@ -63,6 +63,7 @@ The engine is modular: activation functions, loss functions, and layers are easi
 
 ### Future Work
 
+- [ ] Switch Design Pattern for Activation + Loss
 - [ ] Switch Matrix class to use size_t + Refactor
 - [ ] Better Softmax Implementation
 - [ ] Continue with optimizations
