@@ -61,6 +61,18 @@ A \* B, where A and B are 256x256 dimension matrices.
 
 ### Results
 
+| **Metric**                         | **Naive**     | **Blocked**  | **SIMD**    | **Notes / Improvement**                                                    |
+| ---------------------------------- | ------------- | ------------ | ----------- | -------------------------------------------------------------------------- |
+| **Instructions Executed (I refs)** | 137M          | 156M         | 46M         | SIMD executes ~3× fewer instructions than Blocked and Naive                |
+| **L1 I-Cache Misses (I1)**         | 1,838         | 1,839        | 1,868       | All near 0% — instruction cache not a bottleneck                           |
+| **LL I-Cache Misses (LLi)**        | 1,570         | 1,574        | 1,601       | Negligible differences                                                     |
+| **Data Refs (D refs)**             | 53.8M         | 71.3M        | 14.3M       | SIMD uses ~3.7× fewer data accesses than Naive                             |
+| **L1 D-Cache Misses (D1)**         | 17.8M (33.1%) | 2.37M (3.3%) | 967K (6.8%) | Blocked significantly improves locality; SIMD benefits from fewer accesses |
+| **LL D-Cache Misses (LLd)**        | 2.16M (4.0%)  | 110K (0.2%)  | 114K (0.8%) | Blocked has best cache efficiency; SIMD is close behind                    |
+| **Total LL Cache Misses**          | 2.16M         | 111K         | 116K        | Blocked and SIMD reduce long-latency memory access significantly           |
+
+> **Main Takeaway:** Blocking significantly reduces cache misses due to better spatial and temporal locality. SIMD further reduces instruction count and improves throughput with vectorized operations.
+
 | Implementation | Avg Time (µs) | Speedup |
 | -------------- | ------------- | ------- |
 | Naive          | 11,039.1      | –       |

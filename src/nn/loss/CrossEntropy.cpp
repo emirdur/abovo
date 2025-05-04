@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <cmath>
 
 #include "nn/loss/CrossEntropy.hpp"
 

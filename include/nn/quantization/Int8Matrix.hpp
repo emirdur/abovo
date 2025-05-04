@@ -2,6 +2,9 @@
 #define NN_INT8MATRIX_HPP
 
 #include <vector>
+#include <cstddef>
+#include <cstdint>
+#include <vector>
 #include "../Matrix.hpp"
 
 namespace nn::quantization { 

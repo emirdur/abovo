@@ -2,6 +2,7 @@
 #include <arm_neon.h>
 #include <vector>
 #include <cmath>
+#include <stdexcept>
 
 namespace nn::matmul {
 
