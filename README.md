@@ -68,7 +68,6 @@ The engine is modular: activation functions, loss functions, and layers are easi
 - [ ] Better Softmax Implementation
 - [ ] Continue with optimizations
 - [ ] Add support for convolutional layers
-- [ ] Import trained models via ONNX or PyTorch + Comparisons
 - [ ] Implement GPU acceleration (Metal or CUDA)
 - [ ] LLVMs?
 - [ ] Add unit tests and CI/CD pipeline
