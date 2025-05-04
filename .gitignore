@@ -51,7 +51,9 @@ compile_commands.json
 .cache/
 
 # MNIST dataset files
+**/data/MNIST/raw
 *.idx3-ubyte
 *.idx1-ubyte
 
 *.png
+*.onnx
