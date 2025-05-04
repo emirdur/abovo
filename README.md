@@ -27,11 +27,11 @@ make
 **Docker (x86_64 emulation on Apple Silicon):**
 
 ```bash
-docker build -t NN-ab-ovo .
-docker run --rm NN-ab-ovo
+docker build -t nn-ab-ovo .
+docker run --rm nn-ab-ovo
 ```
 
-Make sure the MNIST dataset files (`train-images.idx3-ubyte`, `train-labels.idx1-ubyte`, etc.) are in the project root or mounted into the Docker container.
+> Make sure the MNIST dataset files (`train-images.idx3-ubyte`, `train-labels.idx1-ubyte`, etc.) are in the project root or mounted into the Docker container.
 
 ---
 
