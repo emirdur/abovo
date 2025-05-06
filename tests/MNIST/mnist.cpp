@@ -1,4 +1,6 @@
 #include <iostream>
+#include <iomanip>
+#include <string>
 
 #include "nn/Matrix.hpp"
 #include "nn/DenseLayer.hpp"
@@ -8,10 +10,16 @@
 
 using namespace nn;
 
+void evaluate_model(Sequential& model, const Matrix& X_test, const Matrix& y_test, const std::string& description) {
+    double accuracy = model.evaluate(X_test, y_test);
+    std::cout << description << ": " << std::fixed << std::setprecision(2) << accuracy * 100 << "%" << std::endl;
+}
+
 int main() {
     int num_train, num_labels;
     int num_test, num_test_labels;
     try {
+        // Load MNIST dataset
         auto images = load_mnist_images("train-images.idx3-ubyte", num_train);
         auto labels = load_mnist_labels("train-labels.idx1-ubyte", num_labels);
     
@@ -25,31 +33,55 @@ int main() {
             return 1;
         }
         
-        Sequential model;
-        model.add(DenseLayer(784, 512, ActivationType::RELU));
-        model.add(DenseLayer(512, 256, ActivationType::RELU));
-        model.add(DenseLayer(256, 128, ActivationType::RELU));
-        model.add(DenseLayer(128, 10, ActivationType::SOFTMAX));
-
         Matrix X_train(images);
         Matrix y_train(labels);
         Matrix X_test(test_images);
         Matrix y_test(test_labels);
         
-        std::clog << "[DEBUG]: Starting training..." << std::endl;
-        model.train(X_train, y_train, 25, 64, 0.01, LossType::CROSS_ENTROPY);
+        std::cout << "\nBaseline + PTQ:" << std::endl;
         
-        std::clog << "[DEBUG]: Training complete!" << std::endl;
+        Sequential baseline_model;
+        baseline_model.add(DenseLayer(784, 512, ActivationType::RELU));
+        baseline_model.add(DenseLayer(512, 256, ActivationType::RELU));
+        baseline_model.add(DenseLayer(256, 128, ActivationType::RELU));
+        baseline_model.add(DenseLayer(128, 10, ActivationType::SOFTMAX));
         
-        double test_accuracy = model.evaluate(X_test, y_test);
-        std::cout << "Final test accuracy: " << test_accuracy * 100 << "%" << std::endl;
+        std::clog << "[DEBUG]: Starting baseline training..." << std::endl;
+        baseline_model.train(X_train, y_train, 25, 64, 0.001, LossType::CROSS_ENTROPY);
+        std::clog << "[DEBUG]: Baseline training complete!" << std::endl;
+        
+        evaluate_model(baseline_model, X_test, y_test, "Baseline FP32 accuracy");
+        
+        baseline_model.quantizeAll(true); // PTQ
+        evaluate_model(baseline_model, X_test, y_test, "Baseline PTQ accuracy");
+        
+        baseline_model.dequantizeAll();
+        
+        Now we try quantization...
+        std::cout << "\nQuantization-Aware Training:" << std::endl;
+        
+        Sequential qat_model;
+        qat_model.add(DenseLayer(784, 512, ActivationType::RELU));
+        qat_model.add(DenseLayer(512, 256, ActivationType::RELU));
+        qat_model.add(DenseLayer(256, 128, ActivationType::RELU));
+        qat_model.add(DenseLayer(128, 10, ActivationType::SOFTMAX));
 
-        model.dequantizeAll();
+        qat_model.train(X_train, y_train, 15, 64, 0.0001, LossType::CROSS_ENTROPY);
+        
+        qat_model.enableQAT(true);
+        
+        std::clog << "[DEBUG]: Starting QAT training..." << std::endl;
+        qat_model.train(X_train, y_train, 15, 64, 0.0001, LossType::CROSS_ENTROPY);
+        std::clog << "[DEBUG]: QAT training complete!" << std::endl;
+        
+        evaluate_model(qat_model, X_test, y_test, "QAT model in FP32");
+        
+        qat_model.quantizeAll(true);
+        evaluate_model(qat_model, X_test, y_test, "QAT model in INT8");
+        
+        return 0;
     } catch (const std::exception& e) {
         std::cerr << "[ERROR]: " << e.what() << std::endl;
         return 1;
     }
-
-
-    return 0;
 }

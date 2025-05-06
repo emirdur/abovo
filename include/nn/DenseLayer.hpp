@@ -20,8 +20,9 @@ private:
 
     ActivationType activation_type;
 
-    bool is_quantized = false;
+    bool is_quantized;
     quantization::Int8Matrix quantized_weights;
+    quantization::Int8Matrix quantized_biases;
 
 public:
     DenseLayer(int in, int out, ActivationType activation_type);
@@ -32,9 +33,11 @@ public:
 
     Matrix backward(const Matrix& d_out, double eta);
 
-    void quantize();
+    void quantize(bool per_channel=true);
     void dequantize();
     bool isQuantized() const;
+
+    void simulateQuantization(); // Quantization-Aware Training
 };
 
 }

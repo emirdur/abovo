@@ -8,7 +8,7 @@
 namespace nn {
 
 DenseLayer::DenseLayer(int in, int out, ActivationType activation): input_size(in), output_size(out), weights(input_size, output_size), 
-  biases(1, output_size), activation_type(activation), is_quantized(false), quantized_weights(0, 0, 1.0, 0.0) {	
+  biases(1, output_size), activation_type(activation), is_quantized(false), quantized_weights(0, 0), quantized_biases(0, 0) {	
 	weights.randomize(input_size);
 	
 	for (int j = 0; j < output_size; ++j) {
@@ -16,9 +16,17 @@ DenseLayer::DenseLayer(int in, int out, ActivationType activation): input_size(i
 	}
 }
 
-void DenseLayer::quantize() {
+void DenseLayer::quantize(bool per_channel) {
     if (!is_quantized) {
-        quantized_weights = quantization::Int8Matrix::quantize(weights);
+		// per_channel default
+        if (per_channel) {
+            quantized_weights = quantization::Int8Matrix::quantize_per_channel(weights);
+        } else {
+            quantized_weights = quantization::Int8Matrix::quantize_per_tensor(weights);
+        }
+        
+        quantized_biases = quantization::Int8Matrix::quantize_per_tensor(biases);
+        
         is_quantized = true;
     }
 }
@@ -26,29 +34,41 @@ void DenseLayer::quantize() {
 void DenseLayer::dequantize() {
     if (is_quantized) {
         weights = quantized_weights.dequantize();
+        biases = quantized_biases.dequantize();
         is_quantized = false;
     }
 }
 
 bool DenseLayer::isQuantized() const {
-	return is_quantized;
+    return is_quantized;
+}
+
+void DenseLayer::simulateQuantization() {
+    quantization::Int8Matrix temp_weights = quantization::Int8Matrix::quantize_per_channel(weights);
+    
+    quantization::Int8Matrix temp_biases = quantization::Int8Matrix::quantize_per_tensor(biases);
+
+    weights = temp_weights.dequantize();
+    biases = temp_biases.dequantize();
 }
 
 
-
 Matrix DenseLayer::forward(const Matrix& X) {
-	last_input = X;
-	Matrix z;
+    last_input = X;
+    Matrix z;
 
-	if (is_quantized) {
-		Matrix deq_weights = quantized_weights.dequantize();
-        z = X * deq_weights + biases;
-	} else {
-		z = X * weights + biases;
-	}
+    if (is_quantized) {
+        // dequantize and do matrix multiplication
+		// will implement quantized multiplication later on
+        Matrix deq_weights = quantized_weights.dequantize();
+        Matrix deq_biases = quantized_biases.dequantize();
+        z = X * deq_weights + deq_biases;
+    } else {
+        z = X * weights + biases;
+    }
 
-	last_linear_output = z;
-	return z;
+    last_linear_output = z;
+    return z;
 }
 
 Matrix DenseLayer::activation(const Matrix& X) const {
@@ -56,30 +76,18 @@ Matrix DenseLayer::activation(const Matrix& X) const {
 }
 
 void DenseLayer::print() const {
+	std::cout << "Layer: Input=" << input_size << ", Output=" << output_size << std::endl;
+    std::cout << "Activation: " << static_cast<int>(activation_type) << std::endl;
 	std::cout << "Quantized: " << (is_quantized ? "Yes" : "No") << std::endl;
 
-	std::cout << "Weights:" << std::endl;
-	if (is_quantized) {
-        std::cout << "Quantized weights (showing dequantized values):" << std::endl;
-        Matrix deq = quantized_weights.dequantize();
-        for (int i = 0; i < input_size; ++i) {
-            for (int j = 0; j < output_size; ++j) {
-                std::cout << deq(i, j) << " ";
-            }
-            std::cout << std::endl;
-        }
-        
-        std::cout << "Quantization scale: " << quantized_weights.getScale() << std::endl;
-        std::cout << "Quantization min: " << quantized_weights.getMin() << std::endl;
-    } else {
-		for (int i = 0; i < input_size; ++i) {
-			for (int j = 0; j < output_size; ++j) {
-				std::cout << weights(i, j) << " ";
-			}
-			std::cout << std::endl;
+	std::cout << std::endl << "Weights:" << std::endl;
+	for (int i = 0; i < input_size; ++i) {
+		for (int j = 0; j < output_size; ++j) {
+			std::cout << weights(i, j) << " ";
 		}
+		std::cout << std::endl;
 	}
-
+	
 	std::cout << std::endl << "Biases:" << std::endl;
 	for (int i = 0; i < output_size; ++i) {
 		std::cout << biases(0, i) << " ";
@@ -90,20 +98,20 @@ void DenseLayer::print() const {
 
 Matrix DenseLayer::backward(const Matrix& incoming_gradient, double learning_rate) {
 	if (is_quantized) {
-        Matrix deq_weights = quantized_weights.dequantize();
+        auto saved_quantized_weights = quantized_weights;
+        auto saved_quantized_biases = quantized_biases;
         
-        auto saved_quantized = quantized_weights;
-        
-        weights = deq_weights;
+        weights = quantized_weights.dequantize();
+        biases = quantized_biases.dequantize();
         is_quantized = false;
 
         Matrix result = backward(incoming_gradient, learning_rate);
         
-        quantized_weights = quantization::Int8Matrix::quantize(weights);
-        is_quantized = true;
+        quantize();
         
         return result;
     }
+
 
 	// z = a * W + b
 	// incoming_gradient = dC_0 / da^(L)
@@ -114,23 +122,25 @@ Matrix DenseLayer::backward(const Matrix& incoming_gradient, double learning_rat
     
     Matrix adjusted_gradient = incoming_gradient.hadamard_product(activation_derivative);
 
-	// check for explosions
-	double max_val = -1e9;
-	double min_val = 1e9;
-
-	for (int i = 0; i < adjusted_gradient.getRows(); ++i) {
-		for (int j = 0; j < adjusted_gradient.getCols(); ++j) {
-			max_val = std::max(max_val, adjusted_gradient(i, j));
-			min_val = std::min(min_val, adjusted_gradient(i, j));
-		}
-	}
-
-	if (std::isnan(max_val) || std::isnan(min_val)) {
-		std::clog << "[DEBUG]: Explosion detected in adjusted gradient." << std::endl;
-	}
-	else if (std::abs(max_val) > 1e3 || std::abs(min_val) > 1e3) {
-		std::clog << "[DEBUG]: Large gradient values detected. Max: " << max_val << " Min: " << min_val << "." << std::endl;
-	}
+	// explosion clamp
+	double max_norm = 1.0;
+    double current_norm = 0.0;
+    
+    for (int i = 0; i < adjusted_gradient.getRows(); ++i) {
+        for (int j = 0; j < adjusted_gradient.getCols(); ++j) {
+            current_norm += adjusted_gradient(i, j) * adjusted_gradient(i, j);
+        }
+    }
+    current_norm = std::sqrt(current_norm);
+    
+    if (current_norm > max_norm) {
+        double scale_factor = max_norm / current_norm;
+        for (int i = 0; i < adjusted_gradient.getRows(); ++i) {
+            for (int j = 0; j < adjusted_gradient.getCols(); ++j) {
+                adjusted_gradient(i, j) *= scale_factor;
+            }
+        }
+    }
 
 	// last_input.tranpose() = dz^(L) / dw^(L)
 	// grad_weights = dC_0 / dw^(L) = chain rule from other influences

@@ -14,19 +14,27 @@ public:
     size_t rows;
     size_t cols;
     std::vector<int8_t> data;
-    float scale;
-    float min;
 
-    Int8Matrix(size_t rows, size_t cols, float scale, float min);
+    std::vector<float> scales;
+    std::vector<float> zeros;
+    bool per_channel;
+
+    Int8Matrix(size_t rows, size_t cols); // channel
+    Int8Matrix(size_t rows, size_t cols, float scale, float zero); // tensor
 
     int8_t& operator()(size_t i, size_t j);
     const int8_t& operator()(size_t i, size_t j) const;
 
-    static Int8Matrix quantize(const nn::Matrix& X);
+    static Int8Matrix quantize_per_tensor(const nn::Matrix& X);
+    static Int8Matrix quantize_per_channel(const nn::Matrix& X);
     nn::Matrix dequantize() const;
 
-    float getScale() const;
-    float getMin() const;
+    float getScale(size_t channel=0) const;
+    float getZero(size_t channel=0) const;
+    bool isPerChannel() const;
+    
+    size_t getRows() const;
+    size_t getCols() const;
 };
 
 } 

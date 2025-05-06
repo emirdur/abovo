@@ -7,7 +7,7 @@
 
 namespace nn {
 
-Sequential::Sequential() {}
+Sequential::Sequential() : qat(false) {}
 
 Matrix Sequential::forward(const Matrix& X) {
     Matrix out = X;
@@ -20,8 +20,8 @@ Matrix Sequential::forward(const Matrix& X) {
     return out;
 } 
 
-void Sequential::backward(const Matrix& y_pred, const Matrix& y_true, double learning_rate) {
-    Matrix gradient = loss.loss_derivative(y_pred, y_true, LossType::MSE);
+void Sequential::backward(const Matrix& y_pred, const Matrix& y_true, double learning_rate, LossType loss_type) {
+    Matrix gradient = loss.loss_derivative(y_pred, y_true, loss_type);
     
     for (int i = layers.size() - 1; i >= 0; --i) {
         gradient = layers[i].backward(gradient, learning_rate);
@@ -36,6 +36,10 @@ void Sequential::print() const {
     for (auto& layer : layers) {
         layer.print();
     }
+}
+
+void Sequential::enableQAT(bool enable) {
+    this->qat = enable;
 }
 
 // mini-batch implementation
@@ -77,18 +81,43 @@ void Sequential::train(const Matrix& X, const Matrix& y, int epochs, int batch_s
                 }
             }
             
+            // if QAT enabled, apply to forward pass
+            if (qat) {
+                for (auto& layer : layers) {
+                    layer.simulateQuantization();
+                }
+            }
+            
             Matrix preds = forward(batch_X);
             
             double batch_loss = loss.loss(preds, batch_y, loss_type);
             epoch_loss += batch_loss;
             
-            backward(preds, batch_y, learning_rate);
+            backward(preds, batch_y, learning_rate, loss_type);
         }
         
         epoch_loss /= num_batches;
         
         if (epoch % 10 == 0 || epoch == epochs - 1) {
             std::cout << "Epoch " << epoch + 1 << "/" << epochs << " - Loss: " << epoch_loss << std::endl;
+            
+            if (epoch % 10 == 0 && epoch > 0) {
+                int eval_size = std::min(1000, static_cast<int>(X.getRows()));
+                Matrix X_subset(eval_size, X.getCols());
+                Matrix y_subset(eval_size, y.getCols());
+                
+                for (int i = 0; i < eval_size; ++i) {
+                    for (int j = 0; j < X.getCols(); ++j) {
+                        X_subset(i, j) = X(i, j);
+                    }
+                    for (int j = 0; j < y.getCols(); ++j) {
+                        y_subset(i, j) = y(i, j);
+                    }
+                }
+                
+                double accuracy = evaluate(X_subset, y_subset);
+                std::cout << "- Current training accuracy: " << accuracy * 100 << "%" << std::endl;
+            }
         }
     }
 }
@@ -123,9 +152,9 @@ double Sequential::evaluate(const Matrix& X_test, const Matrix& y_test) {
     return static_cast<double>(correct) / X_test.getRows();
 }
 
-void Sequential::quantizeAll() {
+void Sequential::quantizeAll(bool per_channel) {
     for (auto& layer : layers) {
-        layer.quantize();
+        layer.quantize(per_channel);
     }
 }
 
