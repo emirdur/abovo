@@ -7,7 +7,7 @@
 
 namespace nn::matmul {
 
-Matrix multiply_blocked_simd(const Matrix& A, const Matrix& B, int BLOCK_SIZE = 64);
+Matrix multiply_blocked_simd(const Matrix& A, const Matrix& B, int BLOCK_SIZE=64);
 
 }
 

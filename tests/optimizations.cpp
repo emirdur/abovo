@@ -11,6 +11,7 @@
 #include "nn/matmul/Naive.hpp"
 #include "nn/matmul/Blocked.hpp"
 #include "nn/matmul/SIMD.hpp"
+#include "nn/matmul/SIMD_MT.hpp"
 
 using namespace nn;
 
@@ -107,6 +108,28 @@ int main() {
     }
 
     printAverage(multiplyTimes, "Matrix Multiplication (SIMD Blocking)");
+
+    std::cout << std::endl << "Matrix Multiplication (SIMD Blocking + Multi-Threading)" << std::endl;
+    std::cout << "Matrix Size: " << MATRIX_SIZE << "x" << MATRIX_SIZE << std::endl;
+    std::cout << "Iterations: " << NUM_ITERATIONS << std::endl;
+
+    for (int w = 0; w < 3; w++) {
+        Matrix C = matmul::multiply_blocked_simd_mt(A, B);
+    }
+    
+    for (int i = 0; i < NUM_ITERATIONS; i++) {
+        auto start = std::chrono::high_resolution_clock::now();
+        
+        Matrix C = matmul::multiply_blocked_simd_mt(A, B);
+        
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+        
+        multiplyTimes.push_back(duration.count());
+        std::cout << "Iteration " << (i+1) << ": " << duration.count() << " µs" << std::endl;
+    }
+
+    printAverage(multiplyTimes, "Matrix Multiplication (SIMD Blocking + Multi-Threading)");
     
     return 0;
 }

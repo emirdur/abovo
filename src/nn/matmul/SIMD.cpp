@@ -1,5 +1,4 @@
 #include "nn/matmul/SIMD.hpp"
-#include <arm_neon.h>
 #include <vector>
 #include <cmath>
 #include <stdexcept>

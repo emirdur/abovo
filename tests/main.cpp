@@ -10,6 +10,7 @@
 #include "nn/matmul/Naive.hpp"
 #include "nn/matmul/Blocked.hpp"
 #include "nn/matmul/SIMD.hpp"
+#include "nn/matmul/SIMD_MT.hpp"
 
 using namespace nn;
 
@@ -26,7 +27,7 @@ int main() {
     A.randomize(MATRIX_SIZE);
     B.randomize(MATRIX_SIZE);
     
-    Matrix C = matmul::multiply_blocked_simd(A, B);
+    Matrix C = matmul::multiply_blocked_simd_mt(A, B);
 
     // Once you run your Dockerfile (docker build -t nn-ab-ovo .; docker run --rm nn-ab-ovo) you'll be able to profile
     // cache misses and compare it with the blocked multiplication version.
