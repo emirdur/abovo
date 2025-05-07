@@ -87,7 +87,7 @@ void DenseLayer::print() const {
 		}
 		std::cout << std::endl;
 	}
-	
+
 	std::cout << std::endl << "Biases:" << std::endl;
 	for (int i = 0; i < output_size; ++i) {
 		std::cout << biases(0, i) << " ";
@@ -163,6 +163,95 @@ Matrix DenseLayer::backward(const Matrix& incoming_gradient, double learning_rat
     biases = biases + ((grad_biases * learning_rate) * -1);
 
 	// pass gradient to previous layer by multiplying current gradient with weights: dC_0/dz^(L) * dz^(L)/da^(L-1) = dC_0/da^(L-1)
+    return adjusted_gradient * weights.transpose();
+}
+
+void DenseLayer::initializeOptimizer() {
+    if (!optimizer_initialized) {
+        m_weights = Matrix(input_size, output_size, 0.0);
+        m_biases = Matrix(1, output_size, 0.0);
+        v_weights = Matrix(input_size, output_size, 0.0);
+        v_biases = Matrix(1, output_size, 0.0);
+        optimizer_initialized = true;
+    }
+}
+
+Matrix DenseLayer::backwardAdam(const Matrix& incoming_gradient, double learning_rate, double beta1, double beta2, double epsilon,
+	 int t) {
+    if (is_quantized) {
+        auto saved_quantized_weights = quantized_weights;
+        auto saved_quantized_biases = quantized_biases;
+        
+        weights = quantized_weights.dequantize();
+        biases = quantized_biases.dequantize();
+        is_quantized = false;
+
+        Matrix result = backwardAdam(incoming_gradient, learning_rate, beta1, beta2, epsilon, t);
+        
+        quantize();
+        
+        return result;
+    }
+
+    if (!optimizer_initialized) {
+        initializeOptimizer();
+    }
+
+    Matrix activation_derivative = Activation::activation_derivative(last_linear_output, activation_type);
+    Matrix adjusted_gradient = incoming_gradient.hadamard_product(activation_derivative);
+    
+    double max_norm = 1.0;
+    double current_norm = 0.0;
+    
+    for (int i = 0; i < adjusted_gradient.getRows(); ++i) {
+        for (int j = 0; j < adjusted_gradient.getCols(); ++j) {
+            current_norm += adjusted_gradient(i, j) * adjusted_gradient(i, j);
+        }
+    }
+    current_norm = std::sqrt(current_norm);
+    
+    if (current_norm > max_norm) {
+        double scale_factor = max_norm / current_norm;
+        for (int i = 0; i < adjusted_gradient.getRows(); ++i) {
+            for (int j = 0; j < adjusted_gradient.getCols(); ++j) {
+                adjusted_gradient(i, j) *= scale_factor;
+            }
+        }
+    }
+
+    Matrix grad_weights = last_input.transpose() * adjusted_gradient;
+    
+    Matrix grad_biases(1, adjusted_gradient.getCols());
+    for (int j = 0; j < adjusted_gradient.getCols(); ++j) {
+        double sum = 0.0;
+        for (int i = 0; i < adjusted_gradient.getRows(); ++i) {
+            sum += adjusted_gradient(i, j);
+        }
+        grad_biases(0, j) = sum;
+    }
+    
+    for (int i = 0; i < input_size; ++i) {
+        for (int j = 0; j < output_size; ++j) {
+            m_weights(i, j) = beta1 * m_weights(i, j) + (1 - beta1) * grad_weights(i, j); // first moment update
+            v_weights(i, j) = beta2 * v_weights(i, j) + (1 - beta2) * (grad_weights(i, j) * grad_weights(i, j)); // second moment
+            
+            double m_corrected = m_weights(i, j) / (1 - std::pow(beta1, t));
+            double v_corrected = v_weights(i, j) / (1 - std::pow(beta2, t));
+            
+            weights(i, j) -= learning_rate * m_corrected / (std::sqrt(v_corrected) + epsilon);
+        }
+    }
+    
+    for (int j = 0; j < output_size; ++j) {
+        m_biases(0, j) = beta1 * m_biases(0, j) + (1 - beta1) * grad_biases(0, j);
+        v_biases(0, j) = beta2 * v_biases(0, j) + (1 - beta2) * (grad_biases(0, j) * grad_biases(0, j));
+        
+        double m_corrected = m_biases(0, j) / (1 - std::pow(beta1, t));
+        double v_corrected = v_biases(0, j) / (1 - std::pow(beta2, t));
+        
+        biases(0, j) -= learning_rate * m_corrected / (std::sqrt(v_corrected) + epsilon);
+    }
+	
     return adjusted_gradient * weights.transpose();
 }
 

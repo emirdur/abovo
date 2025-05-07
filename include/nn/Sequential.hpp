@@ -13,6 +13,12 @@ private:
     Loss loss;
     bool qat;
 
+    int optimizer_iteration;
+    bool use_adam;
+    double beta1;
+    double beta2;
+    double epsilon;
+
 public:
     Sequential();
 
@@ -31,6 +37,8 @@ public:
     bool isQuantized() const;
     
     void enableQAT(bool enable);
+
+    void enableAdam(bool enable=true, double b1=0.9, double b2=0.999, double eps=1e-8);
 };
 
 }

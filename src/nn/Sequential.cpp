@@ -7,7 +7,15 @@
 
 namespace nn {
 
-Sequential::Sequential() : qat(false) {}
+Sequential::Sequential() : qat(false), optimizer_iteration(0), use_adam(false), beta1(0.9), beta2(0.999), epsilon(1e-8) {}
+
+void Sequential::enableAdam(bool enable, double b1, double b2, double eps) {
+    this->use_adam = enable;
+    this->beta1 = b1;
+    this->beta2 = b2;
+    this->epsilon = eps;
+    this->optimizer_iteration = 0;
+}
 
 Matrix Sequential::forward(const Matrix& X) {
     Matrix out = X;
@@ -23,8 +31,16 @@ Matrix Sequential::forward(const Matrix& X) {
 void Sequential::backward(const Matrix& y_pred, const Matrix& y_true, double learning_rate, LossType loss_type) {
     Matrix gradient = loss.loss_derivative(y_pred, y_true, loss_type);
     
-    for (int i = layers.size() - 1; i >= 0; --i) {
-        gradient = layers[i].backward(gradient, learning_rate);
+    if (this->use_adam) {
+        this->optimizer_iteration++;
+        for (int i = layers.size() - 1; i >= 0; --i) {
+            gradient = layers[i].backwardAdam(gradient, learning_rate, this->beta1, this->beta2, this->epsilon, 
+                this->optimizer_iteration);
+        }
+    } else {
+        for (int i = layers.size() - 1; i >= 0; --i) {
+            gradient = layers[i].backward(gradient, learning_rate);
+        }
     }
 }
 

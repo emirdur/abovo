@@ -24,6 +24,12 @@ private:
     quantization::Int8Matrix quantized_weights;
     quantization::Int8Matrix quantized_biases;
 
+    Matrix m_weights; // first moment (momentum)
+    Matrix m_biases;
+    Matrix v_weights; // second moment (velocity)
+    Matrix v_biases;
+    bool optimizer_initialized;
+
 public:
     DenseLayer(int in, int out, ActivationType activation_type);
 
@@ -38,6 +44,9 @@ public:
     bool isQuantized() const;
 
     void simulateQuantization(); // Quantization-Aware Training
+
+    void initializeOptimizer();
+    Matrix backwardAdam(const Matrix& incoming_gradient, double learning_rate, double beta1, double beta2, double epsilon, int t);
 };
 
 }

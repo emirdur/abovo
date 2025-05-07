@@ -37,27 +37,8 @@ int main() {
         Matrix y_train(labels);
         Matrix X_test(test_images);
         Matrix y_test(test_labels);
-        
-        std::cout << "\nBaseline + PTQ:" << std::endl;
-        
-        Sequential baseline_model;
-        baseline_model.add(DenseLayer(784, 512, ActivationType::RELU));
-        baseline_model.add(DenseLayer(512, 256, ActivationType::RELU));
-        baseline_model.add(DenseLayer(256, 128, ActivationType::RELU));
-        baseline_model.add(DenseLayer(128, 10, ActivationType::SOFTMAX));
-        
-        std::clog << "[DEBUG]: Starting baseline training..." << std::endl;
-        baseline_model.train(X_train, y_train, 25, 64, 0.001, LossType::CROSS_ENTROPY);
-        std::clog << "[DEBUG]: Baseline training complete!" << std::endl;
-        
-        evaluate_model(baseline_model, X_test, y_test, "Baseline FP32 accuracy");
-        
-        baseline_model.quantizeAll(true); // PTQ
-        evaluate_model(baseline_model, X_test, y_test, "Baseline PTQ accuracy");
-        
-        baseline_model.dequantizeAll();
-        
-        Now we try quantization...
+
+        // We try quantization...
         std::cout << "\nQuantization-Aware Training:" << std::endl;
         
         Sequential qat_model;
@@ -66,13 +47,15 @@ int main() {
         qat_model.add(DenseLayer(256, 128, ActivationType::RELU));
         qat_model.add(DenseLayer(128, 10, ActivationType::SOFTMAX));
 
-        qat_model.train(X_train, y_train, 15, 64, 0.0001, LossType::CROSS_ENTROPY);
+        std::clog << "[DEBUG]: Starting training..." << std::endl;
+        qat_model.enableAdam(true);
+        qat_model.train(X_train, y_train, 25, 64, 0.001, LossType::CROSS_ENTROPY);
         
-        qat_model.enableQAT(true);
+        // qat_model.enableQAT(true);
         
-        std::clog << "[DEBUG]: Starting QAT training..." << std::endl;
-        qat_model.train(X_train, y_train, 15, 64, 0.0001, LossType::CROSS_ENTROPY);
-        std::clog << "[DEBUG]: QAT training complete!" << std::endl;
+        // std::clog << "[DEBUG]: Starting QAT refinement..." << std::endl;
+        // qat_model.train(X_train, y_train, 15, 64, 0.0001, LossType::CROSS_ENTROPY);
+        // std::clog << "[DEBUG]: QAT training complete!" << std::endl;
         
         evaluate_model(qat_model, X_test, y_test, "QAT model in FP32");
         
