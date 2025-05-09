@@ -235,6 +235,7 @@ Matrix DenseLayer::backwardAdam(const Matrix& incoming_gradient, double learning
             m_weights(i, j) = beta1 * m_weights(i, j) + (1 - beta1) * grad_weights(i, j); // first moment update
             v_weights(i, j) = beta2 * v_weights(i, j) + (1 - beta2) * (grad_weights(i, j) * grad_weights(i, j)); // second moment
             
+			// bias correction
             double m_corrected = m_weights(i, j) / (1 - std::pow(beta1, t));
             double v_corrected = v_weights(i, j) / (1 - std::pow(beta2, t));
             
@@ -251,7 +252,7 @@ Matrix DenseLayer::backwardAdam(const Matrix& incoming_gradient, double learning
         
         biases(0, j) -= learning_rate * m_corrected / (std::sqrt(v_corrected) + epsilon);
     }
-	
+
     return adjusted_gradient * weights.transpose();
 }
 
