@@ -1,9 +1,9 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
-#include "Sequential.hpp"
-#include "DenseLayer.hpp"
-#include "Loss.hpp"
-#include "Matrix.hpp"
+#include "nn/Sequential.hpp"
+#include "nn/DenseLayer.hpp"
+#include "nn/Loss.hpp"
+#include "nn/Matrix.hpp"
 
 namespace py = pybind11;
 using namespace nn;
@@ -11,7 +11,7 @@ using namespace nn;
 PYBIND11_MODULE(abovo, m) {
     py::enum_<LossType>(m, "LossType")
         .value("MSE", LossType::MSE)
-        .value("CrossEntropy", LossType::CrossEntropy)
+        .value("CrossEntropy", LossType::CROSS_ENTROPY)
         .export_values();
 
     py::class_<Matrix>(m, "Matrix")
