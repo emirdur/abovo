@@ -29,7 +29,6 @@ pip install abovo
 ```python
 from abovo import Sequential, DenseLayer, Matrix, ActivationType, LossType
 
-# XOR input
 X = Matrix(4, 2)
 X[0, 0] = 0; X[0, 1] = 0
 X[1, 0] = 0; X[1, 1] = 1
@@ -51,6 +50,10 @@ model.train(X, y, epochs=100, batch_size=1, learning_rate=0.1, loss_type=LossTyp
 ## Why “ab ovo”?
 
 _"From the egg" — the library was built from the ground up, with performance and pedagogy in mind._
+
+## Documentation
+
+Full documentation is available at [https://nn-ab-ovo.readthedocs.io/](https://nn-ab-ovo.readthedocs.io/).
 
 ## License
 

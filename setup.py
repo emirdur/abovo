@@ -79,7 +79,7 @@ else:
 
 setup(
     name="abovo",
-    version="0.1.0",
+    version="0.1.1",
     description="A C++ neural network engine with Python bindings, designed for educational performance optimization.",
     long_description=open("README-pypi.md").read(),
     long_description_content_type="text/markdown",
