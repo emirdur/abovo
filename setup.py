@@ -94,4 +94,10 @@ setup(
     ],
     packages=["abovo"],
     include_package_data=True,
+    extras_require={
+        'docs': [
+            'sphinx>=4.0.0',
+            'sphinx-rtd-theme',
+        ],
+    },
 )
