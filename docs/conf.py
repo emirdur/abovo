@@ -2,6 +2,15 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
 
+from mock_modules import Matrix, DenseLayer, Sequential, LossType, ActivationType
+sys.modules['_abovo'] = type('_abovo', (), {
+    'Matrix': Matrix,
+    'DenseLayer': DenseLayer,
+    'Sequential': Sequential,
+    'LossType': LossType,
+    'ActivationType': ActivationType,
+})
+
 project = 'abovo'
 author = 'Emir D'
 release = '0.1.0'

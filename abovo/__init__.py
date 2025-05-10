@@ -4,13 +4,17 @@ Abovo: A C++ neural network engine with Python bindings for educational performa
 
 __version__ = "0.1.0"
 
-from _abovo import (
-    Matrix as _Matrix,
-    DenseLayer as _DenseLayer,
-    Sequential as _Sequential,
-    LossType,
-    ActivationType,
-)
+# this is just for documentation - it won't actually work
+try:
+    from _abovo import (
+        Matrix as _Matrix,
+        DenseLayer as _DenseLayer,
+        Sequential as _Sequential,
+        LossType,
+        ActivationType,
+    )
+except ImportError:
+    from mock_modules import Matrix as _Matrix, DenseLayer as _DenseLayer, Sequential as _Sequential, LossType, ActivationType
 
 class Matrix(_Matrix):
     """
