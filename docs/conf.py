@@ -2,7 +2,9 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
 
-import conftest
+from conftest import *
+
+import abovo
 
 project = 'abovo'
 author = 'Emir D'
