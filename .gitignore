@@ -60,3 +60,5 @@ compile_commands.json
 
 .pypirc
 __pycache__
+
+docs/_build/
