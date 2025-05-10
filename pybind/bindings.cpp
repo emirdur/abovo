@@ -8,7 +8,7 @@
 namespace py = pybind11;
 using namespace nn;
 
-PYBIND11_MODULE(abovo, m) {
+PYBIND11_MODULE(_abovo, m) {
     py::enum_<LossType>(m, "LossType")
         .value("MSE", LossType::MSE)
         .value("CrossEntropy", LossType::CROSS_ENTROPY)

@@ -42,7 +42,7 @@ namespace nn::matmul {
                 for (int kk = 0; kk < inner; kk += BLOCK_SIZE) {
                     int block_inner = std::min(BLOCK_SIZE, inner - kk);
                     
-                    // Neon is column-major so transpose in memory for faster results
+                    // Transpose in memory for faster results with SIMD
                     for (int i = 0; i < block_rows; ++i) {
                         for (int k = 0; k < block_inner; ++k) {
                             A_block[k * BLOCK_SIZE + i] = static_cast<float>(A(ii + i, kk + k));
@@ -58,6 +58,8 @@ namespace nn::matmul {
                     int simd_rows = (block_rows / 4) * 4; // process as multiple of 4
                     int simd_cols = (block_cols / 4) * 4;
                     
+                    #if defined(__ARM_NEON) || defined(__ARM_NEON__) || defined(USE_ARM_NEON)
+                    // ARM NEON implementation
                     for (int i = 0; i < simd_rows; i += 4) {
                         for (int j = 0; j < simd_cols; j += 4) {
                             float32x4_t A0; // column of A
@@ -90,8 +92,95 @@ namespace nn::matmul {
                             vst1q_f32(&C_block[(j + 3) * BLOCK_SIZE + i], C3);
                         }
                     }
-                    
-                    // default to normal multiplication if out of room
+                    #elif defined(__AVX__) || defined(__AVX2__)
+                    // x86 AVX implementation
+                    for (int i = 0; i < simd_rows; i += 8) {
+                        for (int j = 0; j < simd_cols; j += 4) {
+                            __m256 A0;
+                            __m256 C0, C1, C2, C3;
+                            
+                            C0 = _mm256_loadu_ps(&C_block[(j + 0) * BLOCK_SIZE + i]);
+                            C1 = _mm256_loadu_ps(&C_block[(j + 1) * BLOCK_SIZE + i]);
+                            C2 = _mm256_loadu_ps(&C_block[(j + 2) * BLOCK_SIZE + i]);
+                            C3 = _mm256_loadu_ps(&C_block[(j + 3) * BLOCK_SIZE + i]);
+                            
+                            for (int k = 0; k < block_inner; ++k) {
+                                A0 = _mm256_loadu_ps(&A_block[k * BLOCK_SIZE + i]);
+                                
+                                float b0 = B_block[(j + 0) * BLOCK_SIZE + k];
+                                float b1 = B_block[(j + 1) * BLOCK_SIZE + k];
+                                float b2 = B_block[(j + 2) * BLOCK_SIZE + k];
+                                float b3 = B_block[(j + 3) * BLOCK_SIZE + k];
+                                
+                                #if defined(__AVX2__)
+                                C0 = _mm256_fmadd_ps(_mm256_set1_ps(b0), A0, C0);
+                                C1 = _mm256_fmadd_ps(_mm256_set1_ps(b1), A0, C1);
+                                C2 = _mm256_fmadd_ps(_mm256_set1_ps(b2), A0, C2);
+                                C3 = _mm256_fmadd_ps(_mm256_set1_ps(b3), A0, C3);
+                                #else
+                                // For AVX but not AVX2, no FMA available
+                                C0 = _mm256_add_ps(C0, _mm256_mul_ps(_mm256_set1_ps(b0), A0));
+                                C1 = _mm256_add_ps(C1, _mm256_mul_ps(_mm256_set1_ps(b1), A0));
+                                C2 = _mm256_add_ps(C2, _mm256_mul_ps(_mm256_set1_ps(b2), A0));
+                                C3 = _mm256_add_ps(C3, _mm256_mul_ps(_mm256_set1_ps(b3), A0));
+                                #endif
+                            }
+                            
+                            _mm256_storeu_ps(&C_block[(j + 0) * BLOCK_SIZE + i], C0);
+                            _mm256_storeu_ps(&C_block[(j + 1) * BLOCK_SIZE + i], C1);
+                            _mm256_storeu_ps(&C_block[(j + 2) * BLOCK_SIZE + i], C2);
+                            _mm256_storeu_ps(&C_block[(j + 3) * BLOCK_SIZE + i], C3);
+                        }
+                    }
+                    #elif defined(__SSE__) || defined(__SSE2__) || defined(__SSE3__) || defined(__SSSE3__) || defined(__SSE4_1__) || defined(__SSE4_2__)
+                    // x86 SSE implementation
+                    for (int i = 0; i < simd_rows; i += 4) {
+                        for (int j = 0; j < simd_cols; j += 4) {
+                            __m128 A0;
+                            __m128 C0, C1, C2, C3;
+                            
+                            C0 = _mm_loadu_ps(&C_block[(j + 0) * BLOCK_SIZE + i]);
+                            C1 = _mm_loadu_ps(&C_block[(j + 1) * BLOCK_SIZE + i]);
+                            C2 = _mm_loadu_ps(&C_block[(j + 2) * BLOCK_SIZE + i]);
+                            C3 = _mm_loadu_ps(&C_block[(j + 3) * BLOCK_SIZE + i]);
+                            
+                            for (int k = 0; k < block_inner; ++k) {
+                                A0 = _mm_loadu_ps(&A_block[k * BLOCK_SIZE + i]);
+                                
+                                float b0 = B_block[(j + 0) * BLOCK_SIZE + k];
+                                float b1 = B_block[(j + 1) * BLOCK_SIZE + k];
+                                float b2 = B_block[(j + 2) * BLOCK_SIZE + k];
+                                float b3 = B_block[(j + 3) * BLOCK_SIZE + k];
+                                
+                                C0 = _mm_add_ps(C0, _mm_mul_ps(A0, _mm_set1_ps(b0)));
+                                C1 = _mm_add_ps(C1, _mm_mul_ps(A0, _mm_set1_ps(b1)));
+                                C2 = _mm_add_ps(C2, _mm_mul_ps(A0, _mm_set1_ps(b2)));
+                                C3 = _mm_add_ps(C3, _mm_mul_ps(A0, _mm_set1_ps(b3)));
+                            }
+                            
+                            _mm_storeu_ps(&C_block[(j + 0) * BLOCK_SIZE + i], C0);
+                            _mm_storeu_ps(&C_block[(j + 1) * BLOCK_SIZE + i], C1);
+                            _mm_storeu_ps(&C_block[(j + 2) * BLOCK_SIZE + i], C2);
+                            _mm_storeu_ps(&C_block[(j + 3) * BLOCK_SIZE + i], C3);
+                        }
+                    }
+                    #else
+                    // Fallback implementation for when no SIMD is available
+                    for (int i = 0; i < simd_rows; i += 4) {
+                        for (int j = 0; j < simd_cols; j += 4) {
+                            for (int k = 0; k < block_inner; ++k) {
+                                for (int ii = 0; ii < 4; ++ii) {
+                                    float a = A_block[k * BLOCK_SIZE + i + ii];
+                                    C_block[(j + 0) * BLOCK_SIZE + i + ii] += a * B_block[(j + 0) * BLOCK_SIZE + k];
+                                    C_block[(j + 1) * BLOCK_SIZE + i + ii] += a * B_block[(j + 1) * BLOCK_SIZE + k];
+                                    C_block[(j + 2) * BLOCK_SIZE + i + ii] += a * B_block[(j + 2) * BLOCK_SIZE + k];
+                                    C_block[(j + 3) * BLOCK_SIZE + i + ii] += a * B_block[(j + 3) * BLOCK_SIZE + k];
+                                }
+                            }
+                        }
+                    }
+                    #endif
+
                     for (int i = 0; i < block_rows; ++i) {
                         for (int j = simd_cols; j < block_cols; ++j) {
                             for (int k = 0; k < block_inner; ++k) {
@@ -99,7 +188,7 @@ namespace nn::matmul {
                             }
                         }
                     }
-                    
+   
                     for (int i = simd_rows; i < block_rows; ++i) {
                         for (int j = 0; j < block_cols; ++j) {
                             for (int k = 0; k < block_inner; ++k) {
@@ -109,7 +198,6 @@ namespace nn::matmul {
                     }
                 }
                 
-                // copy
                 for (int i = 0; i < block_rows; ++i) {
                     for (int j = 0; j < block_cols; ++j) {
                         res(ii + i, jj + j) = static_cast<double>(C_block[j * BLOCK_SIZE + i]);
