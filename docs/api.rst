@@ -1,36 +1,51 @@
 API Reference
 =============
 
-.. automodule:: abovo
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. currentmodule:: abovo
 
-Classes
--------
+.. automodule:: abovo
+   :noindex:
+
+Matrix
+------
 
 .. autoclass:: abovo.Matrix
    :members:
    :undoc-members:
+   :special-members: __init__
    :show-inheritance:
+   
+DenseLayer
+----------
 
 .. autoclass:: abovo.DenseLayer
    :members:
    :undoc-members:
+   :special-members: __init__
    :show-inheritance:
+
+Sequential
+----------
 
 .. autoclass:: abovo.Sequential
    :members:
    :undoc-members:
+   :special-members: __init__
    :show-inheritance:
 
 Enums
 -----
 
-.. autoclass:: abovo.LossType
-   :members:
-   :undoc-members:
+.. data:: LossType
+   :annotation: Enum for loss functions
+   
+   * MSE = 0
+   * CROSS_ENTROPY = 1
 
-.. autoclass:: abovo.ActivationType
-   :members:
-   :undoc-members:
+.. data:: ActivationType
+   :annotation: Enum for activation functions
+   
+   * RELU = 0
+   * LEAKY_RELU = 1
+   * SIGMOID = 2
+   * SOFTMAX = 3
