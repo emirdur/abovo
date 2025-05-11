@@ -11,7 +11,13 @@ project(abovo)
 
 set(CMAKE_CXX_STANDARD 17)
 
-find_package(pybind11 REQUIRED)
+include(FetchContent)
+FetchContent_Declare(
+    pybind11
+    GIT_REPOSITORY https://github.com/pybind/pybind11.git
+    GIT_TAG v2.13.6
+)
+FetchContent_MakeAvailable(pybind11)
 
 include_directories(include)
 
