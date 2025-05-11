@@ -16,7 +16,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential cmake g++
+          sudo apt-get install -y build-essential cmake g++ libomp-dev
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -30,11 +30,12 @@ jobs:
           pip install -e .
 
       - name: Build C++ extension
+        env:
+          CI: true
         run: |
           mkdir -p build
           cd build
-          # Explicitly set the compilers
-          cmake .. -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++
+          cmake ..
           cmake --build . --config Release
           cd ..
 
