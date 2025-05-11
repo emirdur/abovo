@@ -4,17 +4,17 @@
 
 ---
 
-<p align="center">
-  <a href="https://nn-ab-ovo.readthedocs.io/en/latest/?badge=latest">
+<p align="center" style="text-decoration: none;">
+  <a href="https://nn-ab-ovo.readthedocs.io/en/latest/?badge=latest" style="text-decoration: none;">
     <img src="https://readthedocs.org/projects/nn-ab-ovo/badge/?version=latest" alt="docs">
   </a>
-  <a href="https://github.com/emirdur/NN-ab-ovo/actions">
+  <a href="https://github.com/emirdur/NN-ab-ovo/actions" style="text-decoration: none;">
     <img src="https://github.com/emirdur/NN-ab-ovo/actions/workflows/tests.yml/badge.svg" alt="CI/CD">
   </a>
-  <a href="https://pypi.org/project/abovo/">
+  <a href="https://pypi.org/project/abovo/" style="text-decoration: none;">
     <img src="https://badge.fury.io/py/abovo.svg" alt="PyPI">
   </a>
-  <a href="https://pepy.tech/projects/abovo">
+  <a href="https://pepy.tech/projects/abovo" style="text-decoration: none;">
     <img src="https://static.pepy.tech/badge/abovo" alt="Downloads">
   </a>
 </p>
