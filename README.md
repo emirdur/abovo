@@ -5,9 +5,9 @@
 ---
 
 [![docs](https://readthedocs.org/projects/nn-ab-ovo/badge/?version=latest)](https://nn-ab-ovo.readthedocs.io/en/latest/?badge=latest)
-[![CI/CD](https://github.com/emirdur/NN-ab-ovo/actions/workflows/tests.yml/badge.svg)](https://github.com/emirdur/NN-ab-ovo/actions)
-[![PyPI](https://badge.fury.io/py/abovo.svg)](https://pypi.org/project/abovo/)
-[![Downloads](https://static.pepy.tech/badge/abovo)](https://pepy.tech/projects/abovo)
+[![tests](https://github.com/emirdur/NN-ab-ovo/actions/workflows/tests.yml/badge.svg)](https://github.com/emirdur/NN-ab-ovo/actions)
+[![pypi](https://badge.fury.io/py/abovo.svg)](https://pypi.org/project/abovo/)
+[![downloads](https://static.pepy.tech/badge/abovo)](https://pepy.tech/projects/abovo)
 
 This neural network is built from scratch in C++ and trained using gradient descent and backpropagation. It consists of multiple dense layers, each with learnable weights and biases. The model learns to recognize patterns in data: from basic logic operations like AND/XOR to visual features like curves and edges. Over time, it builds up more complex representations. After training, it can solve problems like the XOR function or classify handwritten digits from the MNIST dataset.
 
