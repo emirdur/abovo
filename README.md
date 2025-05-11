@@ -1,23 +1,13 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/emirdur/NN-ab-ovo/main/assets/abovo_logo.svg" width="500" alt="abovo logo"/>
+  <img src="https://raw.githubusercontent.com/emirdur/NN-ab-ovo/main/assets/abovo_logo.svg" width="300" alt="abovo logo"/>
 </p>
 
 ---
 
-<p align="center" style="text-decoration: none;">
-  <a href="https://nn-ab-ovo.readthedocs.io/en/latest/?badge=latest" style="text-decoration: none;">
-    <img src="https://readthedocs.org/projects/nn-ab-ovo/badge/?version=latest" alt="docs">
-  </a>
-  <a href="https://github.com/emirdur/NN-ab-ovo/actions" style="text-decoration: none;">
-    <img src="https://github.com/emirdur/NN-ab-ovo/actions/workflows/tests.yml/badge.svg" alt="CI/CD">
-  </a>
-  <a href="https://pypi.org/project/abovo/" style="text-decoration: none;">
-    <img src="https://badge.fury.io/py/abovo.svg" alt="PyPI">
-  </a>
-  <a href="https://pepy.tech/projects/abovo" style="text-decoration: none;">
-    <img src="https://static.pepy.tech/badge/abovo" alt="Downloads">
-  </a>
-</p>
+[![docs](https://readthedocs.org/projects/nn-ab-ovo/badge/?version=latest)](https://nn-ab-ovo.readthedocs.io/en/latest/?badge=latest)
+[![CI/CD](https://github.com/emirdur/NN-ab-ovo/actions/workflows/tests.yml/badge.svg)](https://github.com/emirdur/NN-ab-ovo/actions)
+[![PyPI](https://badge.fury.io/py/abovo.svg)](https://pypi.org/project/abovo/)
+[![Downloads](https://static.pepy.tech/badge/abovo)](https://pepy.tech/projects/abovo)
 
 This neural network is built from scratch in C++ and trained using gradient descent and backpropagation. It consists of multiple dense layers, each with learnable weights and biases. The model learns to recognize patterns in data: from basic logic operations like AND/XOR to visual features like curves and edges. Over time, it builds up more complex representations. After training, it can solve problems like the XOR function or classify handwritten digits from the MNIST dataset.
 
