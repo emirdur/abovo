@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/emirdur/NN-ab-ovo/main/assets/abovo_logo.svg" width="200" alt="abovo logo"/>
+  <img src="https://raw.githubusercontent.com/emirdur/NN-ab-ovo/main/assets/abovo_logo.svg" width="500" alt="abovo logo"/>
 </p>
 
 ---
