@@ -1,6 +1,16 @@
-# Abovo
+<p align="center">
+  <img src="https://raw.githubusercontent.com/emirdur/NN-ab-ovo/main/assets/abovo_logo.svg" width="300" alt="abovo logo"/>
+</p>
 
-**Abovo** is a C++ neural network engine with Python bindings, designed as an educational library to demonstrate systems-level performance optimizations.
+---
+
+[![docs](https://readthedocs.org/projects/nn-ab-ovo/badge/?version=latest)](https://nn-ab-ovo.readthedocs.io/en/latest/?badge=latest)
+[![tests](https://github.com/emirdur/NN-ab-ovo/actions/workflows/tests.yml/badge.svg)](https://github.com/emirdur/NN-ab-ovo/actions)
+[![pypi](https://badge.fury.io/py/abovo.svg)](https://pypi.org/project/abovo/)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/emirdur/NN-ab-ovo/badge)](https://scorecard.dev/viewer/?uri=github.com/emirdur/NN-ab-ovo)
+[![downloads](https://static.pepy.tech/badge/abovo)](https://pepy.tech/projects/abovo)
+
+Abovo is a C++ neural network engine with Python bindings, designed as an educational library to demonstrate systems-level performance optimizations.
 
 Built from scratch with modular layers, customizable training, and optimized execution, Abovo gives students and performance-focused developers a hands-on learning platform for matrix computation, backpropagation, and acceleration techniques.
 
