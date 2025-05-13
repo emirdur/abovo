@@ -1,7 +1,7 @@
 #include "nn/MatMul.hpp"
 #include "nn/matmul/Blocked.hpp"
 #include "nn/matmul/Metal.hpp"
-#include "nn/matmul/Naiva.hpp"
+#include "nn/matmul/Naive.hpp"
 #include "nn/matmul/SIMD_MT.hpp"
 #include "nn/matmul/SIMD.hpp"
 
