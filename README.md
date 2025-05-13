@@ -80,7 +80,7 @@ docker run --rm nn-ab-ovo
 
 ## Optimizations
 
-Optimization experiments are documented in the GitHub repository under [optimizations.md](https://github.com/emirdur/NN-ab-ovo/blob/main/tests/optimizations.md), including:
+Optimization experiments are documented in the GitHub repository under [optimizations.md](https://github.com/emirdur/NN-ab-ovo/blob/main/tests/optimizations/optimizations.md), including:
 
 - Naive vs. blocked matrix multiplication
 - Compiler flag benchmarking
