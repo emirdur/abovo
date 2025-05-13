@@ -72,12 +72,12 @@ jobs:
         run: |
           python -m pytest tests/ -v --forked -n auto
 
-      - name: Upload test artifacts
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: test-results
-          path: |
-            build/_abovo*.so
-            .pytest_cache
-          retention-days: 1
+      # - name: Upload test artifacts
+      #   uses: actions/upload-artifact@v3
+      #   if: always()
+      #   with:
+      #     name: test-results
+      #     path: |
+      #       build/_abovo*.so
+      #       .pytest_cache
+      #     retention-days: 1
