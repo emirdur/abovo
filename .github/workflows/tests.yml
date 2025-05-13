@@ -3,34 +3,57 @@ name: tests
 on:
   push:
     branches: [main]
+    paths:
+      - "**.cpp"
+      - "**.hpp"
+      - "**.py"
+      - "CMakeLists.txt"
+      - "setup.py"
+      - ".github/workflows/**"
   pull_request:
     branches: [main]
+    paths:
+      - "**.cpp"
+      - "**.hpp"
+      - "**.py"
+      - "CMakeLists.txt"
+      - "setup.py"
+      - ".github/workflows/**"
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v3
-
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential cmake g++ libomp-dev
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
+          cache: "pip"
+
+      - name: Cache APT packages
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: build-essential cmake g++ libomp-dev
+          version: 1.0
 
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install pytest numpy pybind11
-          # Make sure pybind11 is properly installed for CMake to find
+          python -m pip install pytest pytest-xdist numpy pybind11
           pip install pybind11[global]
-          # Install the package in development mode
-          pip install -e .
+
+      - name: Cache CMake build
+        id: cache-build
+        uses: actions/cache@v3
+        with:
+          path: build
+          key: ${{ runner.os }}-build-${{ hashFiles('**/*.cpp', '**/*.hpp', 'CMakeLists.txt', 'setup.py') }}
+          restore-keys: |
+            ${{ runner.os }}-build-
 
       - name: Build C++ extension
         env:
@@ -38,12 +61,23 @@ jobs:
         run: |
           mkdir -p build
           cd build
-          # Set the CMAKE_PREFIX_PATH to help find pybind11
-          cmake .. -DCMAKE_PREFIX_PATH=$(python -c "import pybind11; print(pybind11.get_cmake_dir())")
-          cmake --build . --config Release
+          cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=$(python -c "import pybind11; print(pybind11.get_cmake_dir())")
+          cmake --build . --config Release -j$(nproc)
           cd ..
 
-      # run tests
+      - name: Install package
+        run: pip install -e .
+
       - name: Test with pytest
         run: |
-          pytest tests/
+          python -m pytest tests/ -v --forked -n auto
+
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-results
+          path: |
+            build/_abovo*.so
+            .pytest_cache
+          retention-days: 1
