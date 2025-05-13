@@ -14,7 +14,7 @@ Abovo is a C++ neural network engine with Python bindings, designed as an educat
 
 Built from scratch with modular layers, customizable training, and optimized execution, Abovo gives students and performance-focused developers a hands-on learning platform for matrix computation, backpropagation, and acceleration techniques.
 
-> Note that this is meant to be used as an educational platform and has not been tested to be used as a production-grade package.
+> Note: this is meant to be used as an educational platform and has not been tested to be used as a production-grade package.
 
 ## Features
 
