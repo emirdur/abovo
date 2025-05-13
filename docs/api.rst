@@ -49,3 +49,12 @@ Enums
    * LEAKY_RELU = 1
    * SIGMOID = 2
    * SOFTMAX = 3
+
+.. data:: MatMulType
+   :annotation: Enum for matrix multiplication implementations
+   
+   * NAIVE = 0
+   * BLOCKED = 1
+   * SIMD = 2
+   * SIMD_MT = 3
+   * METAL_GPU = 4

@@ -8,7 +8,7 @@ import abovo
 
 project = 'abovo'
 author = 'Emir D'
-release = '0.1.0'
+release = '0.1.2'
 
 extensions = [
     'sphinx.ext.autodoc',

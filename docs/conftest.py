@@ -12,6 +12,13 @@ class ActivationType(IntEnum):
     SIGMOID = 2
     SOFTMAX = 3
 
+class MatMulType(IntEnum):
+    NAIVE = 0
+    BLOCKED = 1
+    SIMD = 2
+    SIMD_MT = 3
+    METAL_GPU = 4
+
 class MatrixMock(MagicMock):
     def get_rows(self): return 0
     def get_cols(self): return 0
@@ -44,4 +51,5 @@ sys.modules["_abovo"] = type('_abovo', (), {
     'Sequential': SequentialMock,
     'LossType': LossType,
     'ActivationType': ActivationType,
+    'MatMulType': MatMulType,
 })
