@@ -36,7 +36,7 @@ PYBIND11_MODULE(_abovo, m) {
         .value("RELU", ActivationType::RELU)
         .value("LEAKY_RELU", ActivationType::LEAKY_RELU)
         .value("SIGMOID", ActivationType::SIGMOID)
-        .value("SOFTMAX", ActivationType::SOFTMAX);
+        .value("SOFTMAX", ActivationType::SOFTMAX)
         .export_values();
 
     py::class_<DenseLayer>(m, "DenseLayer")
