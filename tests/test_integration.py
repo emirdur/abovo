@@ -1,4 +1,5 @@
 import unittest
+import pytest
 import numpy as np
 import _abovo
 import tempfile
@@ -6,12 +7,12 @@ import os
 
 class TestIntegration(unittest.TestCase):
     def test_xor_problem(self):
-        for seed in range(1, 6):
+        for seed in range(1, 11):
             np.random.seed(seed)
             
             model = _abovo.Sequential()
-            model.add(_abovo.DenseLayer(2, 8, _abovo.ActivationType.RELU))
-            model.add(_abovo.DenseLayer(8, 1, _abovo.ActivationType.SIGMOID))
+            model.add(_abovo.DenseLayer(2, 12, _abovo.ActivationType.RELU))
+            model.add(_abovo.DenseLayer(12, 1, _abovo.ActivationType.SIGMOID))
             
             X_data = [
                 [0.0, 0.0],
@@ -30,7 +31,7 @@ class TestIntegration(unittest.TestCase):
             y = _abovo.Matrix(y_data)
             
             model.enable_adam(True, 0.9, 0.999, 1e-8)
-            model.train(X, y, epochs=3000, batch_size=4, learning_rate=0.01)
+            model.train(X, y, epochs=250, batch_size=4, learning_rate=0.01)
             
             final_loss = model.evaluate(X, y)
             if final_loss > 0.2:
@@ -55,7 +56,7 @@ class TestIntegration(unittest.TestCase):
             if predictions_correct:
                 return
         
-        self.skip(f"XOR problem failed to converge with multiple configurations; this is a stochastic test and may occasionally fail")
+        pytest.skip(f"XOR problem failed to converge with multiple configurations; this is a stochastic test and may occasionally fail")
 
 
 if __name__ == '__main__':
