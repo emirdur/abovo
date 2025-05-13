@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.0.1)
+cmake_minimum_required(VERSION 3.14)
 
 if(APPLE AND NOT DEFINED ENV{CI})
     if(EXISTS "/opt/homebrew/opt/llvm/bin/clang")
