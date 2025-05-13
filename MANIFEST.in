@@ -1,4 +1,4 @@
-include README-pypi.md
+include README.md
 include LICENSE
 recursive-include include *
 recursive-include src *

@@ -10,22 +10,52 @@
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/emirdur/NN-ab-ovo/badge)](https://scorecard.dev/viewer/?uri=github.com/emirdur/NN-ab-ovo)
 [![downloads](https://static.pepy.tech/badge/abovo)](https://pepy.tech/projects/abovo)
 
-This neural network is built from scratch in C++ and trained using gradient descent and backpropagation. It consists of multiple dense layers, each with learnable weights and biases. The model learns to recognize patterns in data: from basic logic operations like AND/XOR to visual features like curves and edges. Over time, it builds up more complex representations. After training, it can solve problems like the XOR function or classify handwritten digits from the MNIST dataset.
+Abovo is a neural network engine written in C++ with Python bindings, designed to teach systems-level ML optimizations like threading, cache efficiency, hardware acceleration, and quantization.
 
 ---
 
-### Datasets
+## Features
 
-- **XOR**: Simple binary classification problem to validate learning and non-linear decision boundaries.
-- **MNIST**: Handwritten digit classification using 28×28 grayscale images and 10 output classes.
+- C++ backend with modular layers and training pipeline
+- Python API via `pybind11` bindings (`pip install abovo`)
+- Optimizations: SIMD, OpenMP multithreading, cache blocking
+- Post-training quantization (PTQ) and quantization-aware training (QAT) (FP32 → INT8)
+- Profiling support (Valgrind, cache misses, instruction counts)
 
----
+## Installation
 
-### How to Reproduce
+```bash
+pip install abovo
+```
 
-#### Build
+> Requires a C++17-compatible compiler and OpenMP support.
 
-You can either build natively or in Docker. Note the provided Dockerfile runs valgrind, so adjust as needed to run the correct binary.
+## Example (XOR)
+
+```python
+from abovo import Sequential, DenseLayer, Matrix, ActivationType, LossType
+
+X = Matrix(4, 2)
+X[0, 0] = 0; X[0, 1] = 0
+X[1, 0] = 0; X[1, 1] = 1
+X[2, 0] = 1; X[2, 1] = 0
+X[3, 0] = 1; X[3, 1] = 1
+
+y = Matrix(4, 1)
+y[0, 0] = 0
+y[1, 0] = 1
+y[2, 0] = 1
+y[3, 0] = 0
+
+model = Sequential()
+model.add(DenseLayer(2, 4, ActivationType.RELU))
+model.add(DenseLayer(4, 1, ActivationType.SIGMOID))
+model.train(X, y, epochs=100, batch_size=1, learning_rate=0.1, loss_type=LossType.MSE)
+```
+
+## Build (C++ Only)
+
+You can either build natively or in Docker. Note the provided Dockerfile runs valgrind, so adjust as needed to run the correct binary. Recommended on Apple Silicon for x86 builds.
 
 **Native Build (Mac/Linux):**
 
@@ -34,7 +64,7 @@ make
 ./NN-ab-ovo
 ```
 
-**Docker (x86_64 emulation on Apple Silicon):**
+**Docker (x86_64 emulation):**
 
 ```bash
 docker build -t nn-ab-ovo .
@@ -43,35 +73,43 @@ docker run --rm nn-ab-ovo
 
 > Make sure the MNIST dataset files (`train-images.idx3-ubyte`, `train-labels.idx1-ubyte`, etc.) are in the project root or mounted into the Docker container.
 
----
+## Datasets
 
-### Optimizations
+- **XOR**: Validates non-linear separability
+- **MNIST**: Handwritten digit classification
 
-Optimization experiments are documented in [optimizations.md](tests/optimizations.md), including but not limited to:
+## Optimizations
+
+Optimization experiments are documented in the GitHub repository under [optimizations.md](https://github.com/emirdur/NN-ab-ovo/blob/main/tests/optimizations.md), including:
 
 - Naive vs. blocked matrix multiplication
 - Compiler flag benchmarking
-- Cache performance profiling via Valgrind
+- L1/L2 cache miss analysis (Valgrind)
+- OpenMP and SIMD speedups
 - Timing analysis with `std::chrono`
 
-These experiments help evaluate system-level performance and guide improvements for training/inference in C++.
+These experiments help evaluate system-level performance, guide improvements for training/inference, and validate optimizations available to the community.
 
----
-
-### Project Structure
+## Project Structure
 
 - `Matrix.hpp / Matrix.cpp`: Core matrix operations and linear algebra utilities.
 - `DenseLayer.hpp / DenseLayer.cpp`: Fully connected layer with forward and backward pass.
-- `Activation.hpp / Activation.cpp`: Modular support for activation functions (e.g., ReLU, LeakyReLU, Sigmoid).
+- `Activation.hpp / Activation.cpp`: Support for activation functions (e.g., ReLU, LeakyReLU, Sigmoid).
 - `Loss.hpp`: Interface for loss functions (e.g., MSE, CrossEntropy).
 - `Sequential.hpp / Sequential.cpp`: High-level container for layer sequencing and model training.
 - `tests`: Directory containing runnable code on specific datasets.
 
 The engine is modular: activation functions, loss functions, and layers are easily swappable for flexibility and experimentation.
 
----
+## Documentation
 
-### Future Work
+Read the full docs at: [https://nn-ab-ovo.readthedocs.io/](https://nn-ab-ovo.readthedocs.io/).
+
+## Why “ab ovo”?
+
+_"From the egg" — the library was built from the ground up, with performance and pedagogy in mind._
+
+## Future Work
 
 - [ ] Switch Design Pattern for Activation + Loss
 - [ ] Switch Matrix class to use size_t + Refactor
@@ -82,8 +120,6 @@ The engine is modular: activation functions, loss functions, and layers are easi
 - [ ] LLVMs?
 - [ ] Add unit tests and CI/CD pipeline
 
----
-
-### License
+## License
 
 MIT License
