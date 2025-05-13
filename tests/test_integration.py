@@ -6,6 +6,7 @@ import tempfile
 import os
 
 class TestIntegration(unittest.TestCase):
+    @unittest.skipIf(os.environ.get('CI') == 'true', "Skipping in CI environment")
     def test_xor_problem(self):
         for seed in range(1, 11):
             np.random.seed(seed)

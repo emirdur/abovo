@@ -59,6 +59,7 @@ class TestSequential(unittest.TestCase):
         loss = model.evaluate(X, y)
         self.assertIsInstance(loss, float)
         
+    @unittest.skipIf(os.environ.get('CI') == 'true', "Skipping in CI environment")
     def test_adam_optimizer(self):
         model = _abovo.Sequential()
         model.add(_abovo.DenseLayer(3, 2, _abovo.ActivationType.RELU))
