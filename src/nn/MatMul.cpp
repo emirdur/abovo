@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "nn/MatMul.hpp"
 #include "nn/matmul/Blocked.hpp"
 #include "nn/matmul/Metal.hpp"
