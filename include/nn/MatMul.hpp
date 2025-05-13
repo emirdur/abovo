@@ -6,11 +6,11 @@
 namespace nn {
 
 enum class MatMulType {
-    NAIVE,
-    BLOCKED,
-    SIMD,
-    SIMD_MT,
-    METAL_GPU
+    NAIVE = 0,
+    BLOCKED = 1,
+    SIMD = 2,
+    SIMD_MT = 3,
+    METAL_GPU = 4
 };
 
 class MatMul {

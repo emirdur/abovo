@@ -1,5 +1,5 @@
-#ifndef LOSS_HPP
-#define LOSS_HPP
+#ifndef NN_LOSS_HPP
+#define NN_LOSS_HPP
 
 #include "Matrix.hpp"
 

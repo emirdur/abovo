@@ -10,3 +10,6 @@ class TestLossType(unittest.TestCase):
         self.assertEqual(_abovo.LossType.MSE, _abovo.LossType.MSE)
         self.assertEqual(_abovo.LossType.CrossEntropy, _abovo.LossType.CrossEntropy)
         self.assertNotEqual(_abovo.LossType.MSE, _abovo.LossType.CrossEntropy)
+
+if __name__ == '__main__':
+    unittest.main()

@@ -12,3 +12,6 @@ class TestActivationType(unittest.TestCase):
         self.assertEqual(_abovo.ActivationType.SOFTMAX, _abovo.ActivationType.SOFTMAX)
         self.assertEqual(_abovo.ActivationType.LEAKY_RELU, _abovo.ActivationType.LEAKY_RELU)
         self.assertNotEqual(_abovo.ActivationType.RELU, _abovo.ActivationType.SIGMOID)
+
+if __name__ == '__main__':
+    unittest.main()

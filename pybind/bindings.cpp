@@ -11,9 +11,24 @@ namespace py = pybind11;
 using namespace nn;
 
 PYBIND11_MODULE(_abovo, m) {
+    py::enum_<MatMulType>(m, "MatMulType")
+        .value("NAIVE", MatMulType::NAIVE)
+        .value("BLOCKED", MatMulType::BLOCKED)
+        .value("SIMD", MatMulType::SIMD)
+        .value("SIMD_MT", MatMulType::SIMD_MT)
+        // .value("METAL_GPU", MatMulType::METAL_GPU)
+        .export_values();
+
     py::enum_<LossType>(m, "LossType")
         .value("MSE", LossType::MSE)
         .value("CrossEntropy", LossType::CROSS_ENTROPY)
+        .export_values();
+
+    py::enum_<ActivationType>(m, "ActivationType")
+        .value("RELU", ActivationType::RELU)
+        .value("LEAKY_RELU", ActivationType::LEAKY_RELU)
+        .value("SIGMOID", ActivationType::SIGMOID)
+        .value("SOFTMAX", ActivationType::SOFTMAX)
         .export_values();
 
     py::class_<Matrix>(m, "Matrix")
@@ -31,13 +46,6 @@ PYBIND11_MODULE(_abovo, m) {
             m(idx.first, idx.second) = val;
         })
         .def("print", &Matrix::print);
-
-    py::enum_<ActivationType>(m, "ActivationType")
-        .value("RELU", ActivationType::RELU)
-        .value("LEAKY_RELU", ActivationType::LEAKY_RELU)
-        .value("SIGMOID", ActivationType::SIGMOID)
-        .value("SOFTMAX", ActivationType::SOFTMAX)
-        .export_values();
 
     py::class_<DenseLayer>(m, "DenseLayer")
         .def(py::init<int, int, ActivationType>())
@@ -65,12 +73,4 @@ PYBIND11_MODULE(_abovo, m) {
              py::arg("beta2") = 0.999,
              py::arg("epsilon") = 1e-8)
         .def("print", &Sequential::print);
-
-    py::enum_<MatMulType>(m, "MatMulType")
-        .value("NAIVE", MatMulType::NAIVE)
-        .value("BLOCKED", MatMulType::BLOCKED)
-        .value("SIMD", MatMulType::SIMD)
-        .value("SIMD_MT", MatMulType::SIMD_MT)
-        .value("METAL_GPU", MatMulType::METAL_GPU)
-        .export_values();
 }

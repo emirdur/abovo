@@ -10,6 +10,7 @@ from _abovo import (
     Sequential as _Sequential,
     LossType,
     ActivationType,
+    MatMulType,
 )
 
 class Matrix(_Matrix):
@@ -153,4 +154,5 @@ __all__ = [
     "Sequential",
     "LossType",
     "ActivationType",
+    "MatMulType",
 ]

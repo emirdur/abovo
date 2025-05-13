@@ -1,5 +1,5 @@
-#ifndef DENSELAYER_HPP
-#define DENSELAYER_HPP
+#ifndef NN_DENSELAYER_HPP
+#define NN_DENSELAYER_HPP
 
 #include "Matrix.hpp"
 #include "nn/quantization/Int8Matrix.hpp"

@@ -63,3 +63,4 @@ __pycache__
 .pytest_cache
 
 docs/_build/
+test_env

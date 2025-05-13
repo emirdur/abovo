@@ -1,5 +1,5 @@
 import abovo
-from abovo import Sequential, DenseLayer, Matrix, ActivationType, LossType
+from abovo import Sequential, DenseLayer, Matrix, ActivationType, LossType, MatMulType
 
 X = Matrix(4, 2)
 X[0, 0] = 0; X[0, 1] = 0

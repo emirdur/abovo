@@ -17,7 +17,7 @@ class MatMulType(IntEnum):
     BLOCKED = 1
     SIMD = 2
     SIMD_MT = 3
-    METAL_GPU = 4
+    # METAL_GPU = 4
 
 class MatrixMock(MagicMock):
     def get_rows(self): return 0

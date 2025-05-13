@@ -1,5 +1,5 @@
-#ifndef SEQUENTIAL_HPP
-#define SEQUENTIAL_HPP
+#ifndef NN_SEQUENTIAL_HPP
+#define NN_SEQUENTIAL_HPP
 #include <vector>
 
 #include "DenseLayer.hpp"

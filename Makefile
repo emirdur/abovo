@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++20 -Iinclude -O3 -Wall -Wextra -pedantic -flto -g -march=native -fopenmp -ffast-math
+CXXFLAGS = -std=c++20 -Iinclude -O3 -Wall -Wextra -pedantic -flto -g -march=native
 SRC := $(shell find src -name '*.cpp')
 OBJ := $(SRC:.cpp=.o)
 MAIN_TARGET = NN-ab-ovo

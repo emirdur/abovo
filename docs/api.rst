@@ -57,4 +57,4 @@ Enums
    * BLOCKED = 1
    * SIMD = 2
    * SIMD_MT = 3
-   * METAL_GPU = 4
+   .. * METAL_GPU = 4

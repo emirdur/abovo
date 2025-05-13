@@ -12,3 +12,7 @@ class TestMatMulType(unittest.TestCase):
         self.assertEqual(_abovo.MatMulType.SIMD, _abovo.MatMulType.SIMD)
         self.assertEqual(_abovo.MatMulType.SIMD_MT, _abovo.MatMulType.SIMD_MT)
         self.assertEqual(_abovo.MatMulType.METAL_GPU, _abovo.MatMulType.METAL_GPU)
+        self.assertNotEqual(_abovo.MatMulType.NAIVE, _abovo.MatMulType.BLOCKED)
+
+if __name__ == '__main__':
+    unittest.main()
