@@ -92,6 +92,8 @@ These experiments help evaluate system-level performance, guide improvements for
 
 ## Project Structure
 
+The GitHub repository features the following project structure:
+
 - `Matrix.hpp / Matrix.cpp`: Core matrix operations and linear algebra utilities.
 - `DenseLayer.hpp / DenseLayer.cpp`: Fully connected layer with forward and backward pass.
 - `Activation.hpp / Activation.cpp`: Support for activation functions (e.g., ReLU, LeakyReLU, Sigmoid).
@@ -113,12 +115,11 @@ _"From the egg" — the library was built from the ground up, with performance a
 
 - [ ] Switch Design Pattern for Activation + Loss
 - [ ] Switch Matrix class to use size_t + Refactor
-- [ ] Better Softmax Implementation
+- [ ] More comprehensive Softmax implementation
 - [ ] Continue with optimizations
 - [ ] Add support for convolutional layers
 - [ ] Implement GPU acceleration (Metal or CUDA)
 - [ ] LLVMs?
-- [ ] Add unit tests and CI/CD pipeline
 
 ## License
 
