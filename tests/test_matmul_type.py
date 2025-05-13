@@ -11,4 +11,4 @@ class TestMatMulType(unittest.TestCase):
         self.assertEqual(_abovo.MatMulType.BLOCKED, _abovo.MatMulType.BLOCKED)
         self.assertEqual(_abovo.MatMulType.SIMD, _abovo.MatMulType.SIMD)
         self.assertEqual(_abovo.MatMulType.SIMD_MT, _abovo.MatMulType.SIMD_MT)
-        self.assertNotEqual(_abovo.MatMulType.METAL_GPU, _abovo.MatMulType.METAL_GPU)
+        self.assertEqual(_abovo.MatMulType.METAL_GPU, _abovo.MatMulType.METAL_GPU)
