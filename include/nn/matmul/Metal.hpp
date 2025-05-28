@@ -4,13 +4,13 @@
 #include "../Matrix.hpp"
 
 namespace nn::matmul {
-    Matrix multiply_metal(const Matrix& A, const Matrix& B);
-    Matrix multiply_metal_blocked(const Matrix& A, const Matrix& B, int BLOCK_SIZE=64);
-    bool is_metal_available();
+Matrix multiply_metal(const Matrix &A, const Matrix &B);
+Matrix multiply_metal_blocked(const Matrix &A, const Matrix &B,
+                              int BLOCK_SIZE = 64);
+bool is_metal_available();
 
-    void init_metal();
-    void cleanup_metal();
-}
-
+void init_metal();
+void cleanup_metal();
+} // namespace nn::matmul
 
 #endif

@@ -5,7 +5,7 @@
 
 namespace nn::matmul {
 
-Matrix multiply_naive(const Matrix& A, const Matrix& B);
+Matrix multiply_naive(const Matrix &A, const Matrix &B);
 
 }
 

@@ -5,9 +5,9 @@
 
 namespace nn::activation {
 
-Matrix softmax(const Matrix& X);
-Matrix softmax_derivative(const Matrix& X);
+Matrix softmax(const Matrix &X);
+Matrix softmax_derivative(const Matrix &X);
 
-}
+} // namespace nn::activation
 
 #endif

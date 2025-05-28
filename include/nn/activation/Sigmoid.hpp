@@ -5,9 +5,9 @@
 
 namespace nn::activation {
 
-Matrix sigmoid(const Matrix& X);
-Matrix sigmoid_derivative(const Matrix& X);
+Matrix sigmoid(const Matrix &X);
+Matrix sigmoid_derivative(const Matrix &X);
 
-}
+} // namespace nn::activation
 
 #endif

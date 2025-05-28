@@ -5,9 +5,9 @@
 
 namespace nn::activation {
 
-Matrix relu(const Matrix& X);
-Matrix relu_derivative(const Matrix& X);
+Matrix relu(const Matrix &X);
+Matrix relu_derivative(const Matrix &X);
 
-}
+} // namespace nn::activation
 
 #endif

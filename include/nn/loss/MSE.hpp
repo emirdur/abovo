@@ -5,9 +5,9 @@
 
 namespace nn::loss {
 
-    double mse(const Matrix& y_pred, const Matrix& y_true);
-    Matrix mse_derivative(const Matrix& y_pred, const Matrix& y_true);
+double mse(const Matrix &y_pred, const Matrix &y_true);
+Matrix mse_derivative(const Matrix &y_pred, const Matrix &y_true);
 
-}
+} // namespace nn::loss
 
 #endif

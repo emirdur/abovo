@@ -5,7 +5,7 @@
 
 namespace nn::matmul {
 
-Matrix multiply_blocked(const Matrix& A, const Matrix& B, int BLOCK_SIZE=64);
+Matrix multiply_blocked(const Matrix &A, const Matrix &B, int BLOCK_SIZE = 64);
 
 }
 

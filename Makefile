@@ -12,8 +12,8 @@ all: $(MAIN_TARGET) $(OPT_TARGET) $(XOR_TARGET) $(MNIST_TARGET)
 $(MAIN_TARGET): $(OBJ) tests/main.o
 	$(CXX) $(CXXFLAGS) -o $(MAIN_TARGET) $(OBJ) tests/main.o
 
-$(OPT_TARGET): $(OBJ) tests/optimizations.o
-	$(CXX) $(CXXFLAGS) -o $(OPT_TARGET) $(OBJ) tests/optimizations.o
+$(OPT_TARGET): $(OBJ) tests/optimizations/optimizations.o
+	$(CXX) $(CXXFLAGS) -o $(OPT_TARGET) $(OBJ) tests/optimizations/optimizations.o
 
 $(XOR_TARGET): $(OBJ) tests/XOR/xor.o
 	$(CXX) $(CXXFLAGS) -o $(XOR_TARGET) $(OBJ) tests/XOR/xor.o
@@ -24,8 +24,8 @@ $(MNIST_TARGET): $(OBJ) tests/MNIST/mnist.o
 tests/main.o: tests/main.cpp
 	$(CXX) $(CXXFLAGS) -c tests/main.cpp -o tests/main.o
 
-tests/optimizations.o: tests/optimizations.cpp
-	$(CXX) $(CXXFLAGS) -c tests/optimizations.cpp -o tests/optimizations.o
+tests/optimizations.o: tests/optimizations/optimizations.cpp
+	$(CXX) $(CXXFLAGS) -c tests/optimizations/optimizations.cpp -o tests/optimizations/optimizations.o
 
 tests/XOR/xor.o: tests/XOR/xor.cpp
 	$(CXX) $(CXXFLAGS) -c tests/XOR/xor.cpp -o tests/XOR/xor.o
