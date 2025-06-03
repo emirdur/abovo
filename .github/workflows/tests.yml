@@ -48,7 +48,7 @@ jobs:
 
       - name: Cache CMake build
         id: cache-build
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: build
           key: ${{ runner.os }}-build-${{ hashFiles('**/*.cpp', '**/*.hpp', 'CMakeLists.txt', 'setup.py') }}
