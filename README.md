@@ -10,7 +10,7 @@
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/emirdur/NN-ab-ovo/badge)](https://scorecard.dev/viewer/?uri=github.com/emirdur/NN-ab-ovo)
 [![downloads](https://static.pepy.tech/badge/abovo)](https://pepy.tech/projects/abovo)
 
-Abovo is a neural network engine written in C++ with Python bindings, designed to teach systems-level ML optimizations like threading, cache efficiency, hardware acceleration, and quantization.
+NN-ab-ovo (abovo) is a neural network engine written in C++ with Python bindings, designed to teach systems-level ML optimizations like threading, cache efficiency, hardware acceleration, and quantization.
 
 ---
 
@@ -120,6 +120,10 @@ _"From the egg" — the library was built from the ground up, with performance a
 - [ ] Add support for convolutional layers
 - [ ] Implement GPU acceleration (Metal or CUDA)
 - [ ] LLVMs?
+
+## Disclaimer
+
+NN-ab-ovo (abovo) is an independent open-source project and is not affiliated with or endorsed by any company or organization.
 
 ## License
 

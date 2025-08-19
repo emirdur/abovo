@@ -28,7 +28,7 @@ private:
   Matrix m_biases;
   Matrix v_weights; // second moment (velocity)
   Matrix v_biases;
-  bool optimizer_initialized;
+  bool optimizer_initialized = false;
 
 public:
   DenseLayer(int in, int out, ActivationType activation_type);
