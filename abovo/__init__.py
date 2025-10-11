@@ -2,7 +2,7 @@
 Abovo: A C++ neural network engine with Python bindings for educational performance optimization.
 """
 
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 
 from _abovo import (
     Matrix as _Matrix,

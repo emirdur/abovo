@@ -6,6 +6,7 @@
 
 [![docs](https://readthedocs.org/projects/nn-ab-ovo/badge/?version=latest)](https://nn-ab-ovo.readthedocs.io/en/latest/?badge=latest)
 [![tests](https://github.com/emirdur/NN-ab-ovo/actions/workflows/tests.yml/badge.svg)](https://github.com/emirdur/NN-ab-ovo/actions)
+[![GitHub](https://img.shields.io/badge/GitHub-source_code-blue?logo=github)](https://github.com/emirdur/abovo)
 [![pypi](https://badge.fury.io/py/abovo.svg)](https://pypi.org/project/abovo/)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/emirdur/NN-ab-ovo/badge)](https://scorecard.dev/viewer/?uri=github.com/emirdur/NN-ab-ovo)
 [![downloads](https://static.pepy.tech/badge/abovo)](https://pepy.tech/projects/abovo)
@@ -80,7 +81,7 @@ docker run --rm nn-ab-ovo
 
 ## Optimizations
 
-Optimization experiments are documented in the GitHub repository under [optimizations.md](https://github.com/emirdur/NN-ab-ovo/blob/main/tests/optimizations/optimizations.md), including:
+Optimization experiments are documented in the [GitHub repository](https://github.com/emirdur/abovo) under [optimizations.md](https://github.com/emirdur/abovo/blob/main/tests/optimizations/optimizations.md), including:
 
 - Naive vs. blocked matrix multiplication
 - Compiler flag benchmarking
@@ -107,9 +108,9 @@ The engine is modular: activation functions, loss functions, and layers are easi
 
 Read the full docs at: [https://nn-ab-ovo.readthedocs.io/](https://nn-ab-ovo.readthedocs.io/).
 
-## Why “ab ovo”?
+## Source Code
 
-_"From the egg" — the library was built from the ground up, with performance and pedagogy in mind._
+You can find the source code at: [https://github.com/emirdur/abovo](https://github.com/emirdur/abovo).
 
 ## Future Work
 

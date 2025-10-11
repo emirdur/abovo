@@ -4,6 +4,7 @@
 #include <random>
 
 #include "nn/Sequential.hpp"
+#include <iomanip>
 
 namespace nn {
 
@@ -116,28 +117,30 @@ void Sequential::train(const Matrix &X, const Matrix &y, int epochs,
 
     epoch_loss /= num_batches;
 
-    if (epoch % 10 == 0 || epoch == epochs - 1) {
-      std::cout << "Epoch " << epoch + 1 << "/" << epochs
-                << " - Loss: " << epoch_loss << std::endl;
+    if (epoch == 0 || (epoch + 1) % 5 == 0 || epoch == epochs - 1) {
+      std::cout
+                << "Epoch [" << std::setw(2) << epoch + 1 << "/" << epochs << "]"
+                << " - Loss: " << std::fixed << std::setprecision(4) << epoch_loss;
 
-      if (epoch % 10 == 0 && epoch > 0) {
-        int eval_size = std::min(1000, static_cast<int>(X.getRows()));
-        Matrix X_subset(eval_size, X.getCols());
-        Matrix y_subset(eval_size, y.getCols());
+      // Accuracy check on epoch 1, multiples of 5, and final epoch
+      int eval_size = std::min(1000, static_cast<int>(X.getRows()));
+      Matrix X_subset(eval_size, X.getCols());
+      Matrix y_subset(eval_size, y.getCols());
 
-        for (int i = 0; i < eval_size; ++i) {
+      for (int i = 0; i < eval_size; ++i) {
           for (int j = 0; j < X.getCols(); ++j) {
-            X_subset(i, j) = X(i, j);
+              X_subset(i, j) = X(i, j);
           }
           for (int j = 0; j < y.getCols(); ++j) {
-            y_subset(i, j) = y(i, j);
+              y_subset(i, j) = y(i, j);
           }
-        }
-
-        double accuracy = evaluate(X_subset, y_subset);
-        std::cout << "- Current training accuracy: " << accuracy * 100 << "%"
-                  << std::endl;
       }
+
+      double accuracy = evaluate(X_subset, y_subset);
+      std::cout
+                << " - Accuracy: " << std::fixed << std::setprecision(2) 
+                << accuracy * 100 << "%" 
+                << std::endl;
     }
   }
 }
